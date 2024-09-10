@@ -1083,6 +1083,9 @@ class exporter(object):
                 "categ_id",
                 "product_variant_ids",
                 "route_ids",
+                "primary_vsline",
+                "secondary_vsline",
+                "tertiary_vsline",
             ]
             + (
                 [
@@ -1242,6 +1245,20 @@ class exporter(object):
                     else ""
                 ),
             )
+
+            if tmpl["primary_vsline"]:
+                yield '<stringproperty name="primary_vsline" value=%s/>' % (
+                    quoteattr(tmpl["primary_vsline"]),
+                )
+            if tmpl["secondary_vsline"]:
+                yield '<stringproperty name="secondary_vsline" value=%s/>' % (
+                    quoteattr(tmpl["secondary_vsline"]),
+                )
+            if tmpl["tertiary_vsline"]:
+                yield '<stringproperty name="tertiary_vsline" value=%s/>' % (
+                    quoteattr(tmpl["tertiary_vsline"]),
+                )
+
             # Export suppliers for the item, if the item is allowed to be purchased
             if tmpl["purchase_ok"]:
                 suppliers = {}

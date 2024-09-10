@@ -1377,6 +1377,7 @@ class exporter(object):
                 "skill",
                 "search_mode",
                 "secondary_workcenter",
+                "employee_ratio",
             ],
         ):
             if not i["bom_id"]:
@@ -1824,7 +1825,7 @@ class exporter(object):
                                     )
                                 )
 
-                            yield "<suboperation>" '<operation name=%s %spriority="%s" duration_per="%s" xsi:type="operation_time_per">\n' "<location name=%s/>\n" '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
+                            yield "<suboperation>" '<operation name=%s %spriority="%s" duration_per="%s" xsi:type="operation_time_per">\n' "<location name=%s/>\n" '<doubleproperty name="employee_ratio" value="%s"/>' '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
                                 quoteattr(name),
                                 (
                                     ("description=%s " % quoteattr(i["code"]))
@@ -1838,6 +1839,7 @@ class exporter(object):
                                     else "P0D"
                                 ),
                                 quoteattr(location),
+                                step["employee_ratio"],
                                 1,
                                 quoteattr(step["search_mode"]),
                                 quoteattr(

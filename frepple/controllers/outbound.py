@@ -1378,6 +1378,7 @@ class exporter(object):
                 "search_mode",
                 "secondary_workcenter",
                 "employee_ratio",
+                "flowtype",
             ],
         ):
             if not i["bom_id"]:
@@ -1825,7 +1826,7 @@ class exporter(object):
                                     )
                                 )
 
-                            yield "<suboperation>" '<operation name=%s %spriority="%s" duration_per="%s" xsi:type="operation_time_per">\n' "<location name=%s/>\n" '<doubleproperty name="employee_ratio" value="%s"/>' '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
+                            yield "<suboperation>" '<operation name=%s %spriority="%s" duration_per="%s" xsi:type="%s">\n' "<location name=%s/>\n" '<doubleproperty name="employee_ratio" value="%s"/>' '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
                                 quoteattr(name),
                                 (
                                     ("description=%s " % quoteattr(i["code"]))
@@ -1837,6 +1838,12 @@ class exporter(object):
                                     self.convert_float_time(step["time_cycle"] / 1440.0)
                                     if step["time_cycle"] and step["time_cycle"] > 0
                                     else "P0D"
+                                ),
+                                (
+                                    "operation_fixed_time"
+                                    if step["flowtype"]
+                                    and step["flowtype"] in ["qa", "preprod", "away"]
+                                    else "operation_time_per"
                                 ),
                                 quoteattr(location),
                                 step["employee_ratio"],

@@ -1083,6 +1083,9 @@ class exporter(object):
                 "categ_id",
                 "product_variant_ids",
                 "route_ids",
+                "primary_vsline",
+                "secondary_vsline",
+                "tertiary_vsline",
             ]
             + (
                 [
@@ -1168,9 +1171,6 @@ class exporter(object):
                 "weight",
                 "product_template_attribute_value_ids",
                 "price_extra",
-                "primary_vsline",
-                "secondary_vsline",
-                "tertiary_vsline",
             ],
         ):
             if first:
@@ -1246,17 +1246,17 @@ class exporter(object):
                 ),
             )
 
-            if i["primary_vsline"]:
+            if tmpl["primary_vsline"]:
                 yield '<stringproperty name="primary_vsline" value=%s/>' % (
-                    quoteattr(i["primary_vsline"]),
+                    quoteattr(tmpl["primary_vsline"][1]),
                 )
-            if i["secondary_vsline"]:
+            if tmpl["secondary_vsline"]:
                 yield '<stringproperty name="secondary_vsline" value=%s/>' % (
-                    quoteattr(i["secondary_vsline"]),
+                    quoteattr(tmpl["secondary_vsline"][1]),
                 )
-            if i["tertiary_vsline"]:
+            if tmpl["tertiary_vsline"]:
                 yield '<stringproperty name="tertiary_vsline" value=%s/>' % (
-                    quoteattr(i["tertiary_vsline"]),
+                    quoteattr(tmpl["tertiary_vsline"][1]),
                 )
 
             # Export suppliers for the item, if the item is allowed to be purchased

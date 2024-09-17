@@ -1842,7 +1842,8 @@ class exporter(object):
                                 (
                                     "operation_fixed_time"
                                     if step["flowtype"]
-                                    and step["flowtype"] in ["qa", "preprod", "away"]
+                                    and step["flowtype"].lower()
+                                    in ["qa", "preprod", "away"]
                                     else "operation_time_per"
                                 ),
                                 quoteattr(location),

@@ -1322,15 +1322,15 @@ class exporter(object):
                     yield "<itemsuppliers>\n"
                     for k, v in suppliers.items():
                         batching_window = v["batching_window"]
-                        if not batching_window:
-                            # check the product class
-                            if tmpl["purchase_class"]:
-                                if tmpl["purchase_class"].lower() == "a":
-                                    batching_window = 90
-                                elif tmpl["purchase_class"].lower() == "b":
-                                    batching_window = 180
-                                elif tmpl["purchase_class"].lower() == "c":
-                                    batching_window = 365
+                        # check the product class
+                        if tmpl["purchase_class"]:
+                            if tmpl["purchase_class"].lower() == "a":
+                                batching_window = 90
+                            elif tmpl["purchase_class"].lower() == "b":
+                                batching_window = 180
+                            elif tmpl["purchase_class"].lower() == "c":
+                                batching_window = 365
+
 
                         yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
                             v["delay"],

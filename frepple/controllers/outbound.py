@@ -1331,7 +1331,6 @@ class exporter(object):
                             elif tmpl["purchase_class"].lower() == "c":
                                 batching_window = 365
 
-
                         yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
                             v["delay"],
                             v["sequence"] or 1,
@@ -2035,7 +2034,7 @@ class exporter(object):
             due = self.formatDateTime(
                 j.get("commitment_date", False) or j["date_order"]
             )
-            priority = 1  # We give all customer orders the same default priority
+            priority = 10  # We give all customer orders the same default priority
 
             # Possible sales order status are 'draft', 'sent', 'sale', 'done' and 'cancel'
 

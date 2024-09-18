@@ -1086,6 +1086,7 @@ class exporter(object):
                 "primary_vsline",
                 "secondary_vsline",
                 "tertiary_vsline",
+                "purchase_class",
             ]
             + (
                 [
@@ -1320,10 +1321,21 @@ class exporter(object):
                 if suppliers:
                     yield "<itemsuppliers>\n"
                     for k, v in suppliers.items():
+                        batching_window = v["batching_window"]
+                        if not batching_window:
+                            # check the product class
+                            if tmpl["purchase_class"]:
+                                if tmpl["purchase_class"].lower() == "a":
+                                    batching_window = 90
+                                elif tmpl["purchase_class"].lower() == "b":
+                                    batching_window = 180
+                                elif tmpl["purchase_class"].lower() == "c":
+                                    batching_window = 365
+
                         yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
                             v["delay"],
                             v["sequence"] or 1,
-                            v["batching_window"] or 0,
+                            batching_window or 0,
                             v["min_qty"],
                             max(0, v["price"]),
                             (

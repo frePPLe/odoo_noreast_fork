@@ -1846,16 +1846,16 @@ class exporter(object):
                                 ),
                                 counter * 10,
                                 (
-                                    self.convert_float_time(step["time_cycle"] / 1440.0)
-                                    if step["time_cycle"] and step["time_cycle"] > 0
-                                    else "P0D"
-                                ),
-                                (
                                     "duration"
                                     if step["flowtype"]
                                     and step["flowtype"].lower()
                                     in ["qa", "preprod", "away"]
                                     else "duration_per"
+                                ),
+                                (
+                                    self.convert_float_time(step["time_cycle"] / 1440.0)
+                                    if step["time_cycle"] and step["time_cycle"] > 0
+                                    else "P0D"
                                 ),
                                 (
                                     "operation_fixed_time"

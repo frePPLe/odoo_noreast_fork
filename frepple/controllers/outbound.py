@@ -1849,7 +1849,7 @@ class exporter(object):
                                     "duration"
                                     if step["flowtype"]
                                     and step["flowtype"].lower()
-                                    in ["qa", "preprod", "away"]
+                                    in ["qa", "preprod", "away", "final"]
                                     else "duration_per"
                                 ),
                                 (
@@ -1861,7 +1861,7 @@ class exporter(object):
                                     "operation_fixed_time"
                                     if step["flowtype"]
                                     and step["flowtype"].lower()
-                                    in ["qa", "preprod", "away"]
+                                    in ["qa", "preprod", "away", "final"]
                                     else "operation_time_per"
                                 ),
                                 quoteattr(location),
@@ -2501,7 +2501,7 @@ class exporter(object):
 
             # Create a record for the MO
             # Option 1: compute MO end date based on the start date
-            yield '<operationplan type="MO" reference=%s batch=%s start="%s" quantity="%s" status="%s">\n' % (
+            yield '<operationplan type="MO" reference=%s batch=%s start="%s" quantity="%s" status="%s">%s\n' % (
                 quoteattr(i.name),
                 quoteattr(batch),
                 startdate,
@@ -2509,6 +2509,14 @@ class exporter(object):
                 "approved",  # In the "approved" status, frepple can still reschedule the MO in function of material and capacity
                 # "confirmed",  # In the "confirmed" status, frepple sees the MO as frozen and unchangeable
                 # "approved" if i["status"]  == "confirmed" else "confirmed", # In-progress can't be rescheduled in frepple, but confirmed MOs
+                (
+                    (
+                        '<stringproperty name="vsline" value=%s/>'
+                        % (quoteattr(i.vsline_id.name),)
+                    )
+                    if i.vsline_id
+                    else ""
+                ),
             )
             # Option 2: compute MO start date based on the end date
             # yield '<operationplan type="MO" reference=%s end="%s" quantity="%s" status="%s"><operation name=%s/><flowplans>\n' % (

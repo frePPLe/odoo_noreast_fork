@@ -97,6 +97,7 @@ class importer(object):
             change_product_qty = self.env["change.production.qty"].with_user(
                 self.actual_user
             )
+            product_vs = self.env["product.vs"].with_user(self.actual_user)
         else:
             product_product = self.env["product.product"]
             product_supplierinfo = self.env["product.supplierinfo"]
@@ -113,6 +114,8 @@ class importer(object):
             stck_warehouse = self.env["stock.warehouse"]
             stck_location = self.env["stock.location"]
             change_product_qty = self.env["change.production.qty"]
+            product_vs = self.env["product.vs"]
+
         if self.mode == 1:
             # Cancel previous draft purchase quotations
             m = self.env["purchase.order"]
@@ -573,6 +576,16 @@ class importer(object):
                             limit=1,
                         )
 
+                        vsline = None
+                        vsline_elem = elem.get("vsline")
+                        if vsline_elem:
+                            vsline = product_vs.search(
+                                [
+                                    ("name", "=", vsline_elem),
+                                ],
+                                limit=1,
+                            )
+
                         # update the context with the default picking type
                         # to set correct src/dest locations
                         # Also do not create secondary work center records
@@ -600,6 +613,7 @@ class importer(object):
                                     # TODO no place to store the criticality
                                     # elem.get('criticality'),
                                     "origin": "frePPLe",
+                                    "vsline_id": vsline.id if vsline else None,
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

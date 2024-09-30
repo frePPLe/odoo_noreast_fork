@@ -195,21 +195,23 @@ class importer(object):
                             )
                         except Exception:
                             pass
-                    # nd = elem.get("end")
-                    # if st:
-                    #     try:
-                    #         wo["end"] = (
-                    #             self.timezone.localize(
-                    #                 datetime.strptime(
-                    #                     nd,
-                    #                     "%Y-%m-%d %H:%M:%S",
-                    #                 )
-                    #             )
-                    #             .astimezone(UTC)
-                    #             .replace(tzinfo=None)
-                    #         )
-                    #     except Exception:
-                    #         pass
+
+                    # Fixed time operations should have an end date.
+                    nd = elem.get("end")
+                    if nd:
+                        try:
+                            wo["end"] = (
+                                self.timezone.localize(
+                                    datetime.strptime(
+                                        nd,
+                                        "%Y-%m-%d %H:%M:%S",
+                                    )
+                                )
+                                .astimezone(UTC)
+                                .replace(tzinfo=None)
+                            )
+                        except Exception:
+                            pass
                     wo_data.append(wo)
                 except Exception:
                     pass
@@ -514,24 +516,36 @@ class importer(object):
                                     # Can't filter on the computed display_name field in the search...
                                     continue
                                 if wo:
-                                    data = {
-                                        "date_start": self.timezone.localize(
-                                            datetime.strptime(
-                                                elem.get("start"),
-                                                "%Y-%m-%d %H:%M:%S",
+                                    if elem.get("end"):
+                                        data = {
+                                            "date_start": self.timezone.localize(
+                                                datetime.strptime(
+                                                    elem.get("start"),
+                                                    "%Y-%m-%d %H:%M:%S",
+                                                )
                                             )
-                                        )
-                                        .astimezone(UTC)
-                                        .replace(tzinfo=None),
-                                        # "date_finished": self.timezone.localize(
-                                        #     datetime.strptime(
-                                        #         elem.get("end"),
-                                        #         "%Y-%m-%d %H:%M:%S",
-                                        #     )
-                                        # )
-                                        # .astimezone(UTC)
-                                        # .replace(tzinfo=None),
-                                    }
+                                            .astimezone(UTC)
+                                            .replace(tzinfo=None),
+                                            "date_finished": self.timezone.localize(
+                                                datetime.strptime(
+                                                    elem.get("end"),
+                                                    "%Y-%m-%d %H:%M:%S",
+                                                )
+                                            )
+                                            .astimezone(UTC)
+                                            .replace(tzinfo=None),
+                                        }
+                                    else:
+                                        data = {
+                                            "date_start": self.timezone.localize(
+                                                datetime.strptime(
+                                                    elem.get("start"),
+                                                    "%Y-%m-%d %H:%M:%S",
+                                                )
+                                            )
+                                            .astimezone(UTC)
+                                            .replace(tzinfo=None),
+                                        }
                                     for res_id in resources:
                                         res = mfg_workcenter.search(
                                             [("id", "=", res_id)]
@@ -601,7 +615,7 @@ class importer(object):
                                 {
                                     "product_qty": elem.get("quantity"),
                                     "date_start": elem.get("start"),
-                                    # "date_finished": elem.get("end"),
+                                    "date_finished": elem.get("end"),
                                     "product_id": int(item_id),
                                     "company_id": self.company.id,
                                     "product_uom_id": int(uom_id),
@@ -648,6 +662,7 @@ class importer(object):
                                         "date_start": elem.get("start"),
                                         # "date_finished": elem.get("end"),
                                         "origin": "frePPLe",
+                                        "vsline_id": vsline,
                                     }
                                 )
                                 mo_references[elem.get("reference")] = mo
@@ -666,12 +681,12 @@ class importer(object):
                                             wo.date_start = rec["start"]
                                             if not create:
                                                 wo.write({"date_start": wo.date_start})
-                                        # if "end" in rec:
-                                        #     wo.date_finished = rec["end"]
-                                        #     if not create:
-                                        #         wo.write(
-                                        #             {"date_finished": wo.date_finished}
-                                        #         )
+                                        if "end" in rec:
+                                            wo.date_finished = rec["end"]
+                                            if not create:
+                                                wo.write(
+                                                    {"date_finished": wo.date_finished}
+                                                )
 
                                         for res in rec["workcenters"]:
                                             wc = mfg_workcenter.browse(res["id"])

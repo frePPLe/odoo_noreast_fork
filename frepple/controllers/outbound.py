@@ -1950,6 +1950,7 @@ class exporter(object):
             search=search,
             fields=[
                 "qty_delivered",
+                "delivery_date",
                 "state",
                 "product_id",
                 "product_uom_qty",
@@ -2032,7 +2033,7 @@ class exporter(object):
                 # Not interested in this sales order...
                 continue
             due = self.formatDateTime(
-                j.get("commitment_date", False) or j["date_order"]
+                i["delivery_date"] or j.get("commitment_date", False) or j["date_order"]
             )
             priority = 10  # We give all customer orders the same default priority
 
@@ -2073,7 +2074,9 @@ class exporter(object):
                                 if self.respect_reservations
                                 else 0
                             )
-                            due = self.formatDateTime(sm["date"] or j["date_order"])
+                            due = self.formatDateTime(
+                                sm["date"] or i["delivery_date"] or j["date_order"]
+                            )
 
                             yield (
                                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'

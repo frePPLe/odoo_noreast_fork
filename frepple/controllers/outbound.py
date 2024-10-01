@@ -1837,7 +1837,7 @@ class exporter(object):
                                     )
                                 )
 
-                            yield "<suboperation>" '<operation name=%s %spriority="%s" %s="%s" xsi:type="%s">\n' "<location name=%s/>\n" '<doubleproperty name="employee_ratio" value="%s"/>' '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
+                            yield "<suboperation>" '<operation name=%s %spriority="%s" %s="%s" xsi:type="%s">\n' "<location name=%s/>\n" '<doubleproperty name="employee_ratio" value="%s"/>' '<stringproperty name="flowtype" value=%s/>' '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
                                 quoteattr(name),
                                 (
                                     ("description=%s " % quoteattr(i["code"]))
@@ -1866,6 +1866,7 @@ class exporter(object):
                                 ),
                                 quoteattr(location),
                                 step["employee_ratio"],
+                                quoteattr(step["flowtype"]),
                                 1,
                                 quoteattr(step["search_mode"]),
                                 quoteattr(

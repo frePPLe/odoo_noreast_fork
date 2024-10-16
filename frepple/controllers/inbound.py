@@ -600,6 +600,11 @@ class importer(object):
                                 limit=1,
                             )
 
+                        customer_id = None
+                        customer_elem = elem.get("customer")
+                        if customer_elem:
+                            customer_id = int(customer_elem.split(" ")[-1])
+
                         # update the context with the default picking type
                         # to set correct src/dest locations
                         # Also do not create secondary work center records
@@ -628,6 +633,7 @@ class importer(object):
                                     # elem.get('criticality'),
                                     "origin": "frePPLe",
                                     "vsline_id": vsline.id if vsline else None,
+                                    "customer": customer_id,
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.
@@ -687,6 +693,21 @@ class importer(object):
                                                 wo.write(
                                                     {"date_finished": wo.date_finished}
                                                 )
+                                        if "employee_ratio" in rec:
+                                            wo.employee_ratio = float(
+                                                rec["employee_ratio"]
+                                            )
+                                            if not create:
+                                                wo.write(
+                                                    {
+                                                        "employee_ratio": wo.employee_ratio
+                                                    }
+                                                )
+
+                                        if "block" in rec:
+                                            wo.block = int(rec["block"])
+                                            if not create:
+                                                wo.write({"block": wo.block})
 
                                         for res in rec["workcenters"]:
                                             wc = mfg_workcenter.browse(res["id"])

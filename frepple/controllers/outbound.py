@@ -1330,6 +1330,8 @@ class exporter(object):
                                 batching_window = 180
                             elif tmpl["purchase_class"].lower() == "c":
                                 batching_window = 365
+                            elif tmpl["purchase_class"].lower() == "d":
+                                batching_window = 365
 
                         yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
                             v["delay"],
@@ -1851,7 +1853,6 @@ class exporter(object):
                                     and step["flowtype"].lower()
                                     in [
                                         "qa",
-                                        "preprod",
                                         "away",
                                         "final",
                                         "image",
@@ -1870,7 +1871,6 @@ class exporter(object):
                                     and step["flowtype"].lower()
                                     in [
                                         "qa",
-                                        "preprod",
                                         "away",
                                         "final",
                                         "image",

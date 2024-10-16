@@ -1849,7 +1849,14 @@ class exporter(object):
                                     "duration"
                                     if step["flowtype"]
                                     and step["flowtype"].lower()
-                                    in ["qa", "preprod", "away", "final"]
+                                    in [
+                                        "qa",
+                                        "preprod",
+                                        "away",
+                                        "final",
+                                        "image",
+                                        "lottraveller",
+                                    ]
                                     else "duration_per"
                                 ),
                                 (
@@ -1861,7 +1868,14 @@ class exporter(object):
                                     "operation_fixed_time"
                                     if step["flowtype"]
                                     and step["flowtype"].lower()
-                                    in ["qa", "preprod", "away", "final"]
+                                    in [
+                                        "qa",
+                                        "preprod",
+                                        "away",
+                                        "final",
+                                        "image",
+                                        "lottraveller",
+                                    ]
                                     else "operation_time_per"
                                 ),
                                 quoteattr(location),
@@ -2082,14 +2096,14 @@ class exporter(object):
                                 else 0
                             )
                             due = self.formatDateTime(
-                                sm["date"]
-                                or (
+                                (
                                     datetime.combine(
                                         i["delivery_date"], datetime.min.time()
                                     )
                                     if i["delivery_date"]
                                     else None
                                 )
+                                or sm["date"]
                                 or j["date_order"]
                             )
 

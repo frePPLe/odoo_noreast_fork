@@ -1697,7 +1697,7 @@ class exporter(object):
                                 else ""
                             ),
                             self.manufacturing_lead,
-                            100 + (i["sequence"] or 1),
+                            1000 + (i["sequence"] or 1),
                             quoteattr(product_buf["name"]),
                             quoteattr(location),
                         )

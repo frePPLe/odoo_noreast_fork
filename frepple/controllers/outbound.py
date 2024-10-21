@@ -2533,13 +2533,13 @@ class exporter(object):
 
             # Create a record for the MO
             # Option 1: compute MO end date based on the start date
-            yield '<operationplan type="MO" reference=%s batch=%s start="%s" quantity="%s" status="%s">%s\n' % (
+            yield '<operationplan type="MO" reference=%s batch=%s start="%s" quantity="%s" status="%s">%s%s\n' % (
                 quoteattr(i.name),
                 quoteattr(batch),
                 startdate,
                 qty,
-                "approved",  # In the "approved" status, frepple can still reschedule the MO in function of material and capacity
-                # "confirmed",  # In the "confirmed" status, frepple sees the MO as frozen and unchangeable
+                # "approved",  # In the "approved" status, frepple can still reschedule the MO in function of material and capacity
+                "confirmed",  # In the "confirmed" status, frepple sees the MO as frozen and unchangeable
                 # "approved" if i["status"]  == "confirmed" else "confirmed", # In-progress can't be rescheduled in frepple, but confirmed MOs
                 (
                     (
@@ -2547,6 +2547,14 @@ class exporter(object):
                         % (quoteattr(i.vsline_id.name),)
                     )
                     if i.vsline_id
+                    else ""
+                ),
+                (
+                    (
+                        '<stringproperty name="odoo_state" value=%s/>'
+                        % (quoteattr(i.state),)
+                    )
+                    if i.state
                     else ""
                 ),
             )
@@ -2757,12 +2765,10 @@ class exporter(object):
 
                     # In the "approved" status, frepple can still reschedule the MO in function of material and capacity
                     # In the "confirmed" status, frepple sees the MO as frozen and unchangeable
-                    if wo.state == "progress":
-                        state = "confirmed"
-                    elif wo.state in ("done", "to_close", "cancel"):
+                    if wo.state in ("done", "to_close", "cancel"):
                         state = "completed"
                     else:
-                        state = "approved"
+                        state = "confirmed"
                     try:
                         if wo.date_finished:
                             wo_date = ' end="%s"' % self.formatDateTime(
@@ -2787,12 +2793,20 @@ class exporter(object):
                             wo_date = ' start="%s"' % self.formatDateTime(dt)
                     except Exception:
                         wo_date = ""
-                    yield '<operationplan type="MO" reference=%s%s quantity="%s" status="%s"><operation name=%s/><owner reference=%s/>' % (
+                    yield '<operationplan type="MO" reference=%s%s quantity="%s" status="%s"><operation name=%s/>%s<owner reference=%s/>' % (
                         quoteattr(wo.display_name),
                         wo_date,
                         qty,
                         state,
                         quoteattr("%s - %s" % (suboperation, wo.id)),
+                        (
+                            (
+                                '<stringproperty name="odoo_state" value=%s/>'
+                                % (quoteattr(wo.state),)
+                            )
+                            if wo.state
+                            else ""
+                        ),
                         quoteattr(i.name),
                     )
                     if (

@@ -600,10 +600,10 @@ class importer(object):
                                 limit=1,
                             )
 
-                        # customer_id = None
-                        # customer_elem = elem.get("customer")
-                        # if customer_elem:
-                        #     customer_id = int(customer_elem.split(" ")[-1])
+                        customer_id = None
+                        customer_elem = elem.get("customer")
+                        if customer_elem:
+                            customer_id = int(customer_elem.split(" ")[-1])
 
                         # update the context with the default picking type
                         # to set correct src/dest locations
@@ -633,7 +633,7 @@ class importer(object):
                                     # elem.get('criticality'),
                                     "origin": "frePPLe",
                                     "vsline_id": vsline.id if vsline else None,
-                                    # "customer": customer_id,
+                                    "customer": customer_id,
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

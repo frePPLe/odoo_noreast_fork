@@ -605,12 +605,11 @@ class importer(object):
                                 ],
                                 limit=1,
                             )
-
-                        sale_order = None
-                        sale_order_name = elem.get("sale_order")
-                        if sale_order_name:
-                            sale_order = sale_order.with_context(context).search(
-                                [("name", "=", sale_order_name)]
+                        so = None
+                        so_name = elem.get("sale_order")
+                        if so_name:
+                            so = sale_order.with_context(context).search(
+                                [("name", "=", so_name)]
                             )
 
                         # update the context with the default picking type
@@ -641,9 +640,7 @@ class importer(object):
                                     # elem.get('criticality'),
                                     "origin": "frePPLe",
                                     "vsline_id": vsline.id if vsline else None,
-                                    "sale_order_id": (
-                                        sale_order.id if sale_order else None
-                                    ),
+                                    "sale_order_id": (so.id if so else None),
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

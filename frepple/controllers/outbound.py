@@ -954,6 +954,7 @@ class exporter(object):
                 "time_efficiency",
                 "default_capacity",
                 "tool",
+                "frepple_cap_unconstrained",
             ],
         ):
             if first:
@@ -979,9 +980,10 @@ class exporter(object):
                 )
             )
             self.map_workcenters[i["id"]] = name
-            yield '<resource name=%s maximum="%s" category="%s" subcategory="%s" efficiency="%s"><location name=%s/>%s%s</resource>\n' % (
+            yield '<resource name=%s maximum="%s" constrained="%s" category="%s" subcategory="%s" efficiency="%s"><location name=%s/>%s%s</resource>\n' % (
                 quoteattr(name),
                 i["default_capacity"],
+                "false" if i["frepple_cap_unconstrained"] else "true",
                 i["id"],
                 # Use this line if the tool use is independent of the MO quantity
                 # "tool" if i["tool"] else "",

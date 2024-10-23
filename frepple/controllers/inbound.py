@@ -98,6 +98,7 @@ class importer(object):
                 self.actual_user
             )
             product_vs = self.env["product.vs"].with_user(self.actual_user)
+            sale_order = self.env["sale.order"].with_user(self.actual_user)
         else:
             product_product = self.env["product.product"]
             product_supplierinfo = self.env["product.supplierinfo"]
@@ -115,6 +116,7 @@ class importer(object):
             stck_location = self.env["stock.location"]
             change_product_qty = self.env["change.production.qty"]
             product_vs = self.env["product.vs"]
+            sale_order = self.env["sale.order"]
 
         if self.mode == 1:
             # Cancel previous draft purchase quotations
@@ -212,6 +214,10 @@ class importer(object):
                             )
                         except Exception:
                             pass
+
+                    block = elem.get("block")
+                    if block:
+                        wo["block"] = block
                     wo_data.append(wo)
                 except Exception:
                     pass
@@ -600,10 +606,12 @@ class importer(object):
                                 limit=1,
                             )
 
-                        customer_id = None
-                        customer_elem = elem.get("customer")
-                        if customer_elem:
-                            customer_id = int(customer_elem.split(" ")[-1])
+                        sale_order = None
+                        sale_order_name = elem.get("sale_order")
+                        if sale_order_name:
+                            sale_order = sale_order.with_context(context).search(
+                                [("name", "=", sale_order_name)]
+                            )
 
                         # update the context with the default picking type
                         # to set correct src/dest locations
@@ -633,7 +641,9 @@ class importer(object):
                                     # elem.get('criticality'),
                                     "origin": "frePPLe",
                                     "vsline_id": vsline.id if vsline else None,
-                                    "customer": customer_id,
+                                    "sale_order_id": (
+                                        sale_order.id if sale_order else None
+                                    ),
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.
@@ -692,16 +702,6 @@ class importer(object):
                                             if not create:
                                                 wo.write(
                                                     {"date_finished": wo.date_finished}
-                                                )
-                                        if "employee_ratio" in rec:
-                                            wo.employee_ratio = float(
-                                                rec["employee_ratio"]
-                                            )
-                                            if not create:
-                                                wo.write(
-                                                    {
-                                                        "employee_ratio": wo.employee_ratio
-                                                    }
                                                 )
 
                                         if "block" in rec:

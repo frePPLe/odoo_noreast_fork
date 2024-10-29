@@ -275,7 +275,7 @@ class exporter(object):
             yield from self.export_calendar()
         logger.debug("Exporting locations.")
         yield from self.export_locations()
-        self.load_operation_types()
+        # self.load_operation_types()
         logger.debug("Exporting customers.")
         yield from self.export_customers()
         if self.mode == 1:
@@ -2489,15 +2489,8 @@ class exporter(object):
         ):
             # Filter out irrelevant manufacturing orders
             location = self.map_locations.get(i.location_dest_id.id, None)
-            if not location and i.picking_type_id:
-                # For subcontracting MO we find the warehouse on the operation type
-                operation_type = self.operation_types.get(i.picking_type_id.id, None)
-                if operation_type:
-                    location = operation_type["warehouse_id"]
-                    if location:
-                        code = self.subcontracting_mo_po_mapping.get(i.id, None)
-                        if code:
-                            i.name = code
+            if not location:
+                location = "Noreast Electronics Co. Ltd."
             item = self.product_product.get(i.product_id.id, None)
             if not item or not location:
                 continue

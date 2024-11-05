@@ -235,6 +235,14 @@ class importer(object):
                 except Exception:
                     pass
             elif event == "end" and elem.tag == "operationplan":
+                logger.info("***Entering the operationplan section in inbound.py***")
+                logger.info("item_id is %s" % (elem.get("item_id"),))
+                logger.info("supplier is %s" % (elem.get("supplier"),))
+                logger.info("quantity is %s" % (elem.get("quantity"),))
+                logger.info("start is %s" % (elem.get("end"),))
+                logger.info("end is %s" % (elem.get("end"),))
+                logger.info("status is %s" % (elem.get("status"),))
+
                 uom_id, item_id = elem.get("item_id").split(",")
                 try:
                     ordertype = elem.get("ordertype")

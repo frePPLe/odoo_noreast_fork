@@ -308,6 +308,7 @@ class importer(object):
                                     # int(elem.get('location_id')),
                                     # elem.get('criticality'),
                                     "origin": "frePPLe",
+                                    "picking_type_id": 1,
                                 }
                             )
                             po.payment_term_id = (
@@ -649,6 +650,7 @@ class importer(object):
                                     "origin": "frePPLe",
                                     "vsline_id": vsline.id if vsline else None,
                                     "sale_order_id": (so.id if so else None),
+                                    "picking_type_id": 8,
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

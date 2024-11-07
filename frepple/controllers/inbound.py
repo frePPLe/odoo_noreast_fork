@@ -596,14 +596,14 @@ class importer(object):
                     else:
                         # Create or update a manufacturing order
                         warehouse = int(elem.get("location_id"))
-                        picking = stck_picking_type.search(
-                            [
-                                ("code", "=", "mrp_operation"),
-                                ("company_id", "=", self.company.id),
-                                ("warehouse_id", "=", warehouse),
-                            ],
-                            limit=1,
-                        )
+                        # picking = stck_picking_type.search(
+                        #     [
+                        #         ("code", "=", "mrp_operation"),
+                        #         ("company_id", "=", self.company.id),
+                        #         ("warehouse_id", "=", warehouse),
+                        #     ],
+                        #     limit=1,
+                        # )
 
                         vsline = None
                         vsline_elem = elem.get("vsline")
@@ -626,7 +626,7 @@ class importer(object):
                         # Also do not create secondary work center records
                         context.update(
                             {
-                                "default_picking_type_id": picking.id,
+                                "default_picking_type_id": 8,
                                 "ignore_secondary_workcenters": True,
                             }
                         )
@@ -640,7 +640,7 @@ class importer(object):
                                     "product_id": int(item_id),
                                     "company_id": self.company.id,
                                     "product_uom_id": int(uom_id),
-                                    "picking_type_id": picking.id,
+                                    "picking_type_id": 8,
                                     "bom_id": int(
                                         elem.get("operation").rsplit(" ", 1)[1]
                                     ),
@@ -650,7 +650,6 @@ class importer(object):
                                     "origin": "frePPLe",
                                     "vsline_id": vsline.id if vsline else None,
                                     "sale_order_id": (so.id if so else None),
-                                    "picking_type_id": 8,
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

@@ -2072,6 +2072,7 @@ class exporter(object):
             if state in ("draft", "sent"):
                 # status = "inquiry"  # Inquiries don't reserve capacity and materials
                 status = "quote"  # Quotes do reserve capacity and materials
+                priority = 20
                 qty = self.convert_qty_uom(
                     i["product_uom_qty"],
                     i["product_uom"],

@@ -1089,6 +1089,7 @@ class exporter(object):
                 "secondary_vsline",
                 "tertiary_vsline",
                 "purchase_class",
+                "waste_mo_increment",
             ]
             + (
                 [
@@ -1260,6 +1261,10 @@ class exporter(object):
             if tmpl["tertiary_vsline"]:
                 yield '<stringproperty name="tertiary_vsline" value=%s/>' % (
                     quoteattr(tmpl["tertiary_vsline"][1]),
+                )
+            if tmpl["waste_mo_increment"]:
+                yield '<stringproperty name="waste" value="%s"/>' % (
+                    tmpl["waste_mo_increment"],
                 )
 
             # Export suppliers for the item, if the item is allowed to be purchased

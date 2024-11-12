@@ -308,7 +308,6 @@ class importer(object):
                                     # int(elem.get('location_id')),
                                     # elem.get('criticality'),
                                     "origin": "frePPLe",
-                                    "picking_type_id": 1,
                                 }
                             )
                             po.payment_term_id = (
@@ -596,14 +595,14 @@ class importer(object):
                     else:
                         # Create or update a manufacturing order
                         warehouse = int(elem.get("location_id"))
-                        # picking = stck_picking_type.search(
-                        #     [
-                        #         ("code", "=", "mrp_operation"),
-                        #         ("company_id", "=", self.company.id),
-                        #         ("warehouse_id", "=", warehouse),
-                        #     ],
-                        #     limit=1,
-                        # )
+                        picking = stck_picking_type.search(
+                            [
+                                ("code", "=", "mrp_operation"),
+                                ("company_id", "=", self.company.id),
+                                ("warehouse_id", "=", warehouse),
+                            ],
+                            limit=1,
+                        )
 
                         vsline = None
                         vsline_elem = elem.get("vsline")
@@ -626,7 +625,7 @@ class importer(object):
                         # Also do not create secondary work center records
                         context.update(
                             {
-                                "default_picking_type_id": 8,
+                                "default_picking_type_id": picking.id,
                                 "ignore_secondary_workcenters": True,
                             }
                         )
@@ -640,7 +639,7 @@ class importer(object):
                                     "product_id": int(item_id),
                                     "company_id": self.company.id,
                                     "product_uom_id": int(uom_id),
-                                    "picking_type_id": 8,
+                                    "picking_type_id": picking.id,
                                     "bom_id": int(
                                         elem.get("operation").rsplit(" ", 1)[1]
                                     ),

@@ -1332,13 +1332,13 @@ class exporter(object):
                         # check the product class
                         if tmpl["purchase_class"]:
                             if tmpl["purchase_class"].lower() == "a":
-                                batching_window = 28
+                                batching_window = 7
                             elif tmpl["purchase_class"].lower() == "b":
-                                batching_window = 28
+                                batching_window = 7
                             elif tmpl["purchase_class"].lower() == "c":
-                                batching_window = 28
+                                batching_window = 7
                             elif tmpl["purchase_class"].lower() == "d":
-                                batching_window = 28
+                                batching_window = 7
 
                         yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
                             v["delay"],

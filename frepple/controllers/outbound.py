@@ -1134,6 +1134,7 @@ class exporter(object):
             "partner_id",
             "delay",
             "min_qty",
+            "multiple_qty",
             "date_end",
             "date_start",
             "price",
@@ -1284,6 +1285,7 @@ class exporter(object):
                                 "delay": sup["delay"],
                                 "priority": sup["sequence"] or 1,
                                 "size_minimum": sup["min_qty"],
+                                "size_multiple": sup["multiple_qty"],
                             }
                         )
                     elif (name, sup["date_start"]) in suppliers:
@@ -1308,6 +1310,11 @@ class exporter(object):
                             not r["min_qty"] or sup["min_qty"] < r["min_qty"]
                         ):
                             r["min_qty"] = sup["min_qty"]
+                        if sup["multiple_qty"] and (
+                            not r["multiple_qty"]
+                            or sup["multiple_qty"] < r["multiple_qty"]
+                        ):
+                            r["multiple_qty"] = sup["multiple_qty"]
                         if sup["price"] and (
                             not r["price"] or sup["price"] < r["price"]
                         ):
@@ -1322,6 +1329,7 @@ class exporter(object):
                             "sequence": sup["sequence"] or 1,
                             "batching_window": sup["batching_window"] or 0,
                             "min_qty": sup["min_qty"],
+                            "multiple_qty": sup["multiple_qty"],
                             "price": max(0, sup["price"]),
                             "date_end": sup["date_end"],
                         }
@@ -1340,11 +1348,12 @@ class exporter(object):
                             elif tmpl["purchase_class"].lower() == "d":
                                 batching_window = 7
 
-                        yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
+                        yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" size_multiple="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
                             v["delay"],
                             v["sequence"] or 1,
                             batching_window or 0,
                             v["min_qty"],
+                            v["multiple_qty"],
                             max(0, v["price"]),
                             (
                                 ' effective_end="%sT00:00:00"'

@@ -351,6 +351,13 @@ class importer(object):
                                 order="min_qty desc",
                             )
                             product_uom = uom_uom.browse(int(uom_id))
+                            purchasing_uom = supplier.product_uom
+                            if product_uom.id != purchasing_uom.id:
+                                quantity = product_uom._compute_quantity(
+                                    quantity, purchasing_uom
+                                )
+                                uom_id = purchasing_uom.id
+
                             # first create a minimal PO line
                             po_line = proc_orderline.create(
                                 {
@@ -365,7 +372,7 @@ class importer(object):
                             d = po_line._prepare_purchase_order_line(
                                 product,
                                 quantity,
-                                product_uom,
+                                purchasing_uom,
                                 self.company,
                                 supplier,
                                 po,

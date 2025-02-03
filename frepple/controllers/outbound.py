@@ -1571,6 +1571,8 @@ class exporter(object):
                                 "product_id",
                                 "operation_id",
                                 "bom_product_template_attribute_value_ids",
+                                "substitute_1",
+                                "substitute_2",
                             ],
                         ):
                             # check if this BOM line applies to this variant
@@ -1603,10 +1605,40 @@ class exporter(object):
                                 for k in fl[j]
                             )
                             if qty > 0:
-                                yield '<flow xsi:type="flow_start" quantity="-%f"><item name=%s/></flow>\n' % (
+                                yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><item name=%s/></flow>\n' % (
                                     qty / producedQty,
+                                    (
+                                        (" name=%s" % (quoteattr(product["name"]),))
+                                        if j["substitute_1"] or j["substitute_2"]
+                                        else ""
+                                    ),
+                                    (
+                                        " priority=1"
+                                        if j["substitute_1"] or j["substitute_2"]
+                                        else ""
+                                    ),
                                     quoteattr(product["name"]),
                                 )
+                                if j["substitute_1"]:
+                                    substitute_1 = self.product_product.get(
+                                        j["substitute_1"][0], None
+                                    )
+                                    if substitute_1:
+                                        yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=2><item name=%s/></flow>\n' % (
+                                            qty / producedQty,
+                                            quoteattr(product["name"]),
+                                            quoteattr(substitute_1["name"]),
+                                        )
+                                if j["substitute_2"]:
+                                    substitute_2 = self.product_product.get(
+                                        j["substitute_2"][0], None
+                                    )
+                                    if substitute_2:
+                                        yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=3><item name=%s/></flow>\n' % (
+                                            qty / producedQty,
+                                            quoteattr(product["name"]),
+                                            quoteattr(substitute_2["name"]),
+                                        )
 
                         # Build byproduct flows
                         if i.get("sub_products", None):
@@ -1741,6 +1773,8 @@ class exporter(object):
                                 "product_id",
                                 "operation_id",
                                 "bom_product_template_attribute_value_ids",
+                                "substitute_1",
+                                "substitute_2",
                             ],
                         ):
                             # check if this BOM line applies to this variant
@@ -1929,6 +1963,34 @@ class exporter(object):
                                             ]
                                         ),
                                     )
+                                    if j["substitute_1"]:
+                                        substitute_1 = self.product_product.get(
+                                            j["substitute_1"][0], None
+                                        )
+                                        if substitute_1:
+                                            yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=2><item name=%s/></flow>\n' % (
+                                                j["qty"] / producedQty,
+                                                quoteattr(
+                                                    self.product_product[
+                                                        j["product_id"][0]
+                                                    ]["name"]
+                                                ),
+                                                quoteattr(substitute_1["name"]),
+                                            )
+                                    if j["substitute_2"]:
+                                        substitute_2 = self.product_product.get(
+                                            j["substitute_2"][0], None
+                                        )
+                                        if substitute_2:
+                                            yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=3><item name=%s/></flow>\n' % (
+                                                j["qty"] / producedQty,
+                                                quoteattr(
+                                                    self.product_product[
+                                                        j["product_id"][0]
+                                                    ]["name"]
+                                                ),
+                                                quoteattr(substitute_2["name"]),
+                                            )
                             if not first_flow:
                                 yield "</flows>\n"
                             yield "</operation></suboperation>\n"

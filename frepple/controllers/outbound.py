@@ -1957,8 +1957,22 @@ class exporter(object):
                                     if first_flow:
                                         first_flow = False
                                         yield "<flows>\n"
-                                    yield '<flow xsi:type="flow_start" quantity="-%f"><item name=%s/></flow>\n' % (
+                                    yield '<flow xsi:type="flow_start" quantity="-%f"%s><item name=%s/></flow>\n' % (
                                         j["qty"] / producedQty,
+                                        (
+                                            (
+                                                " priority=1 name=%s"
+                                                % (
+                                                    quoteattr(
+                                                        self.product_product[
+                                                            j["product_id"][0]
+                                                        ]["name"]
+                                                    )
+                                                )
+                                            )
+                                            if j["substitute_1"] or j["substitute_2"]
+                                            else ""
+                                        ),
                                         quoteattr(
                                             self.product_product[j["product_id"][0]][
                                                 "name"

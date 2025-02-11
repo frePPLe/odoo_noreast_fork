@@ -1605,16 +1605,13 @@ class exporter(object):
                                 for k in fl[j]
                             )
                             if qty > 0:
-                                yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><item name=%s/></flow>\n' % (
+                                yield '<flow xsi:type="flow_start" quantity="-%f"%s><item name=%s/></flow>\n' % (
                                     qty / producedQty,
                                     (
-                                        (" name=%s" % (quoteattr(product["name"]),))
-                                        if fl[j][0]["substitute_1"]
-                                        or fl[j][0]["substitute_2"]
-                                        else ""
-                                    ),
-                                    (
-                                        " priority=1"
+                                        (
+                                            ' priority="1" name=%s'
+                                            % (quoteattr(product["name"]),)
+                                        )
                                         if fl[j][0]["substitute_1"]
                                         or fl[j][0]["substitute_2"]
                                         else ""
@@ -1626,7 +1623,7 @@ class exporter(object):
                                         fl[j][0]["substitute_1"][0], None
                                     )
                                     if substitute_1:
-                                        yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=2><item name=%s/></flow>\n' % (
+                                        yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority="2"><item name=%s/></flow>\n' % (
                                             qty / producedQty,
                                             quoteattr(product["name"]),
                                             quoteattr(substitute_1["name"]),
@@ -1636,7 +1633,7 @@ class exporter(object):
                                         fl[j][0]["substitute_2"][0], None
                                     )
                                     if substitute_2:
-                                        yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=3><item name=%s/></flow>\n' % (
+                                        yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority="3"><item name=%s/></flow>\n' % (
                                             qty / producedQty,
                                             quoteattr(product["name"]),
                                             quoteattr(substitute_2["name"]),
@@ -1961,7 +1958,7 @@ class exporter(object):
                                         j["qty"] / producedQty,
                                         (
                                             (
-                                                " priority=1 name=%s"
+                                                ' priority="1" name=%s'
                                                 % (
                                                     quoteattr(
                                                         self.product_product[
@@ -1984,7 +1981,7 @@ class exporter(object):
                                             j["substitute_1"][0], None
                                         )
                                         if substitute_1:
-                                            yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=2><item name=%s/></flow>\n' % (
+                                            yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority="2"><item name=%s/></flow>\n' % (
                                                 j["qty"] / producedQty,
                                                 quoteattr(
                                                     self.product_product[
@@ -1998,7 +1995,7 @@ class exporter(object):
                                             j["substitute_2"][0], None
                                         )
                                         if substitute_2:
-                                            yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority=3><item name=%s/></flow>\n' % (
+                                            yield '<flow xsi:type="flow_start" quantity="-%f" name=%s priority="3"><item name=%s/></flow>\n' % (
                                                 j["qty"] / producedQty,
                                                 quoteattr(
                                                     self.product_product[

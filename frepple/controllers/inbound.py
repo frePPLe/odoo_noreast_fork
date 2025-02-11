@@ -99,6 +99,7 @@ class importer(object):
             )
             product_vs = self.env["product.vs"].with_user(self.actual_user)
             sale_order = self.env["sale.order"].with_user(self.actual_user)
+            sale_order_line = self.env["sale.order.line"].with_user(self.actual_user)
         else:
             product_product = self.env["product.product"]
             product_supplierinfo = self.env["product.supplierinfo"]
@@ -117,6 +118,7 @@ class importer(object):
             change_product_qty = self.env["change.production.qty"]
             product_vs = self.env["product.vs"]
             sale_order = self.env["sale.order"]
+            sale_order_line = self.env["sale.order.line"]
 
         if self.mode == 1:
             # Cancel previous draft purchase quotations
@@ -235,13 +237,6 @@ class importer(object):
                 except Exception:
                     pass
             elif event == "end" and elem.tag == "operationplan":
-                logger.info("***Entering the operationplan section in inbound.py***")
-                logger.info("item_id is %s" % (elem.get("item_id"),))
-                logger.info("supplier is %s" % (elem.get("supplier"),))
-                logger.info("quantity is %s" % (elem.get("quantity"),))
-                logger.info("start is %s" % (elem.get("end"),))
-                logger.info("end is %s" % (elem.get("end"),))
-                logger.info("status is %s" % (elem.get("status"),))
 
                 uom_id, item_id = elem.get("item_id").split(",")
                 try:
@@ -621,10 +616,15 @@ class importer(object):
                                 limit=1,
                             )
                         so = None
+                        soline = None
                         so_name = elem.get("sale_order")
                         if so_name:
+                            so_name_stripped, line_id = so_name.rsplit(" ", 1)
                             so = sale_order.with_context(context).search(
-                                [("name", "=", so_name)]
+                                [("name", "=", so_name_stripped)]
+                            )
+                            soline = sale_order_line.with_context(context).search(
+                                [("id", "=", line_id)]
                             )
 
                         # update the context with the default picking type
@@ -656,6 +656,13 @@ class importer(object):
                                     "origin": "frePPLe",
                                     "vsline_id": vsline.id if vsline else None,
                                     "sale_order_id": (so.id if so else None),
+                                    "so_cust_po": (so.client_order_ref if so else None),
+                                    "so_line_id": (
+                                        soline.description if soline else None
+                                    ),
+                                    "so_ship_date": (
+                                        so.commitment_date if so else None
+                                    ),
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

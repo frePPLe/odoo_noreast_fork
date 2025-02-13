@@ -657,9 +657,7 @@ class importer(object):
                                     "vsline_id": vsline.id if vsline else None,
                                     "sale_order_id": (so.id if so else None),
                                     "so_cust_po": (so.client_order_ref if so else None),
-                                    "so_line_id": (
-                                        soline.description if soline else None
-                                    ),
+                                    "so_line_id": (soline.name if soline else None),
                                     "so_ship_date": (
                                         so.commitment_date if so else None
                                     ),

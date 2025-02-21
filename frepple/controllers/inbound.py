@@ -24,6 +24,7 @@
 
 import odoo
 import logging
+import math
 from xml.etree.cElementTree import iterparse
 from datetime import datetime
 from pytz import timezone, UTC
@@ -348,8 +349,10 @@ class importer(object):
                             product_uom = uom_uom.browse(int(uom_id))
                             purchasing_uom = supplier.product_uom
                             if product_uom.id != purchasing_uom.id:
-                                quantity = product_uom._compute_quantity(
-                                    quantity, purchasing_uom
+                                quantity = math.ceil(
+                                    product_uom._compute_quantity(
+                                        quantity, purchasing_uom
+                                    )
                                 )
                                 uom_id = purchasing_uom.id
 

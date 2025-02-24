@@ -2070,6 +2070,7 @@ class exporter(object):
                 "product_uom",
                 "order_id",
                 "move_ids",
+                "dpass",
             ],
         )
 
@@ -2155,6 +2156,19 @@ class exporter(object):
                 or j["date_order"]
             )
             priority = 10  # We give all customer orders the same default priority
+            # but we correct it if dpass exists
+            # DPAS --> PRIORITY
+            # Other --> 1
+            # DX --> 2
+            # DO --> 3
+            dpass = i.get("dpass")
+            if dpass:
+                if dpass == "other":
+                    priority = 1
+                elif dpass == "DX":
+                    priority = 2
+                elif dpass == "DO":
+                    priority = 3
 
             # Possible sales order status are 'draft', 'sent', 'sale', 'done' and 'cancel'
 

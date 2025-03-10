@@ -56,9 +56,9 @@ class importer(object):
         # Pick up the timezone of the connector user (or UTC if not set)
         try:
             usr = self.env["res.users"].browse(ids=[req.uid]).read(["tz"])[0]
-            self.timezone = timezone(usr["tz"] or "UTC")
+            self.timezone = timezone(usr["tz"] or "America/Toronto")
         except Exception:
-            self.timezone = timezone("UTC")
+            self.timezone = timezone("America/Toronto")
 
         # User to be set as responsible on new objects in incremental exports
         self.actual_user = req.httprequest.form.get("actual_user", None)
@@ -221,6 +221,10 @@ class importer(object):
                     block = elem.get("block")
                     if block:
                         wo["block"] = block
+
+                    flowdriver = elem.get("flowdriver")
+                    if flowdriver:
+                        wo["flowdriver"] = flowdriver.lower() == "true"
                     wo_data.append(wo)
                 except Exception:
                     pass
@@ -728,6 +732,13 @@ class importer(object):
                                             wo.block = int(rec["block"])
                                             if not create:
                                                 wo.write({"block": wo.block})
+
+                                        if "flowdriver" in rec:
+                                            wo.flowdriver = (
+                                                rec["flowdriver"].lower() == "true"
+                                            )
+                                            if not create:
+                                                wo.write({"flowdriver": wo.flowdriver})
 
                                         for res in rec["workcenters"]:
                                             wc = mfg_workcenter.browse(res["id"])

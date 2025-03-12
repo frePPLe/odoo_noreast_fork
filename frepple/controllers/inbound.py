@@ -734,9 +734,7 @@ class importer(object):
                                                 wo.write({"block": wo.block})
 
                                         if "flowdriver" in rec:
-                                            wo.flowdriver = (
-                                                rec["flowdriver"].lower() == "true"
-                                            )
+                                            wo.flowdriver = rec["flowdriver"]
                                             if not create:
                                                 wo.write({"flowdriver": wo.flowdriver})
 

@@ -666,7 +666,9 @@ class importer(object):
                                     "so_cust_po": (so.client_order_ref if so else None),
                                     "so_line_id": (soline.name if soline else None),
                                     "so_ship_date": (
-                                        so.commitment_date if so else None
+                                        soline.delivery_date
+                                        if soline
+                                        else (so.commitment_date if so else None)
                                     ),
                                 }
                             )

@@ -225,6 +225,10 @@ class importer(object):
                     flowdriver = elem.get("flowdriver")
                     if flowdriver:
                         wo["flowdriver"] = flowdriver.lower() == "true"
+
+                    flowtime = elem.get("flowtime")
+                    if flowtime:
+                        wo["flowtime"] = flowtime
                     wo_data.append(wo)
                 except Exception:
                     pass
@@ -668,7 +672,9 @@ class importer(object):
                                     "so_cust_po": (so.client_order_ref if so else None),
                                     "so_line_id": (soline.name if soline else None),
                                     "so_ship_date": (
-                                        so.commitment_date if so else None
+                                        soline.delivery_date
+                                        if soline
+                                        else (so.commitment_date if so else None)
                                     ),
                                     "summary_notes": summary_notes,
                                 }
@@ -740,6 +746,11 @@ class importer(object):
                                             wo.flowdriver = rec["flowdriver"]
                                             if not create:
                                                 wo.write({"flowdriver": wo.flowdriver})
+
+                                        if "flowtime" in rec:
+                                            wo.flowtime = float(rec["flowtime"])
+                                            if not create:
+                                                wo.write({"flowtime": wo.flowtime})
 
                                         for res in rec["workcenters"]:
                                             wc = mfg_workcenter.browse(res["id"])

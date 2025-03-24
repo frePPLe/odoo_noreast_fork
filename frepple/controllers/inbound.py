@@ -638,6 +638,8 @@ class importer(object):
                                 [("id", "=", line_id)]
                             )
 
+                        summary_notes = elem.get("summary_notes")
+
                         # update the context with the default picking type
                         # to set correct src/dest locations
                         # Also do not create secondary work center records
@@ -674,6 +676,7 @@ class importer(object):
                                         if soline
                                         else (so.commitment_date if so else None)
                                     ),
+                                    "summary_notes": summary_notes,
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

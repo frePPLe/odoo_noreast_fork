@@ -2782,13 +2782,26 @@ class exporter(object):
                 # Define operations for each WO
                 idx = 10
                 first_wo = True
+
+                # a first loop to compute the employee capacity per block
+                block_employee = {}
+                for wo in wo_list:
+                    if wo.block not in block_employee:
+                        block_employee[wo.block] = wo.employee_ratio
+                    else:
+                        block_employee[wo.block] += wo.employee_ratio
+
                 for wo in wo_list:
                     suboperation = wo.display_name
                     if len(suboperation) > 300:
                         suboperation = suboperation[0:300]
 
                     # Get remaining duration of the WO
-                    time_left = wo.duration_expected - wo.duration_unit
+                    time_left = (
+                        0
+                        if wo.flowdriver == False
+                        else wo.duration_expected - wo.duration_unit
+                    )
                     if wo.is_user_working and wo.time_ids:
                         # The WO is currently being worked on
                         for tm in wo.time_ids:
@@ -2857,15 +2870,52 @@ class exporter(object):
                         and wo.workcenter_id.owner == wo.operation_id.workcenter_id
                     ):
                         # Only send a load definition if the bom specifies a parent pool
-                        yield "<loads><load><resource name=%s/></load></loads>" % quoteattr(
-                            self.map_workcenters[wo.operation_id.workcenter_id.id]
+                        yield "<loads><load><resource name=%s/></load>%s</loads>" % (
+                            quoteattr(
+                                self.map_workcenters[wo.operation_id.workcenter_id.id]
+                            ),
+                            (
+                                (
+                                    '<load quantity="%f"><resource name=%s/></load>'
+                                    % (
+                                        (
+                                            block_employee.get(wo.block, 1)
+                                            if wo.flowdriver
+                                            else 1
+                                        ),
+                                        quoteattr(
+                                            "VS_%s" % f"{int(i.vsline_id.name):02d}"
+                                        ),
+                                    )
+                                )
+                                if i.vsline_id
+                                else ""
+                            ),
                         )
                     elif (
                         wo.workcenter_id and wo.workcenter_id.id in self.map_workcenters
                     ):
-                        yield "<loads><load><resource name=%s/></load></loads>" % quoteattr(
-                            self.map_workcenters[wo.workcenter_id.id]
-                        )
+                        yield "<loads><load><resource name=%s/></load>%s</loads>" % (
+                            quoteattr(self.map_workcenters[wo.workcenter_id.id]),
+                            (
+                                (
+                                    '<load quantity="%f"><resource name=%s/></load>'
+                                    % (
+                                        (
+                                            block_employee.get(wo.block, 1)
+                                            if wo.flowdriver
+                                            else 1
+                                        ),
+                                        quoteattr(
+                                            "VS_%s" % f"{int(i.vsline_id.name):02d}"
+                                        ),
+                                    )
+                                )
+                                if i.vsline_id
+                                else ""
+                            ),
+                        ),
+
                     if wo.operation_id:
                         for wo_sec in wo.secondary_workcenters:
                             if (
@@ -2964,8 +3014,18 @@ class exporter(object):
                         and wo.workcenter_id
                         and wo.workcenter_id.id in self.map_workcenters
                     ):
-                        yield "<loadplans><loadplan><resource name=%s/></loadplan></loadplans>" % quoteattr(
-                            self.map_workcenters[wo.workcenter_id.id]
+                        yield "<loadplans><loadplan><resource name=%s/></loadplan>%s</loadplans>" % (
+                            quoteattr(self.map_workcenters[wo.workcenter_id.id]),
+                            (
+                                (
+                                    "<loadplan><resource name=%s/></loadplan>"
+                                    % quoteattr(
+                                        "VS_%s" % f"{int(i.vsline_id.name):02d}"
+                                    ),
+                                )
+                                if i.vsline_id
+                                else ""
+                            ),
                         )
                     if wo.secondary_workcenters:
                         yield "<loadplans>"

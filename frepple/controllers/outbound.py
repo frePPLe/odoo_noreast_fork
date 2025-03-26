@@ -2869,7 +2869,34 @@ class exporter(object):
                         and wo.workcenter_id.owner
                         and wo.workcenter_id.owner == wo.operation_id.workcenter_id
                     ):
-                        # Only send a load definition if the bom specifies a parent pool
+
+                        logger.info(
+                            "<loads><load><resource name=%s/></load>%s</loads>"
+                            % (
+                                quoteattr(
+                                    self.map_workcenters[
+                                        wo.operation_id.workcenter_id.id
+                                    ]
+                                ),
+                                (
+                                    (
+                                        '<load quantity="%f"><resource name=%s/></load>'
+                                        % (
+                                            (
+                                                block_employee.get(wo.block, 1)
+                                                if wo.flowdriver
+                                                else 1
+                                            ),
+                                            quoteattr(
+                                                "VS_%s" % f"{int(i.vsline_id.name):02d}"
+                                            ),
+                                        )
+                                    )
+                                    if i.vsline_id
+                                    else ""
+                                ),
+                            )
+                        )
                         yield "<loads><load><resource name=%s/></load>%s</loads>" % (
                             quoteattr(
                                 self.map_workcenters[wo.operation_id.workcenter_id.id]
@@ -2895,6 +2922,29 @@ class exporter(object):
                     elif (
                         wo.workcenter_id and wo.workcenter_id.id in self.map_workcenters
                     ):
+                        logger.info(
+                            "<loads><load><resource name=%s/></load>%s</loads>"
+                            % (
+                                quoteattr(self.map_workcenters[wo.workcenter_id.id]),
+                                (
+                                    (
+                                        '<load quantity="%f"><resource name=%s/></load>'
+                                        % (
+                                            (
+                                                block_employee.get(wo.block, 1)
+                                                if wo.flowdriver
+                                                else 1
+                                            ),
+                                            quoteattr(
+                                                "VS_%s" % f"{int(i.vsline_id.name):02d}"
+                                            ),
+                                        )
+                                    )
+                                    if i.vsline_id
+                                    else ""
+                                ),
+                            )
+                        )
                         yield "<loads><load><resource name=%s/></load>%s</loads>" % (
                             quoteattr(self.map_workcenters[wo.workcenter_id.id]),
                             (
@@ -2914,7 +2964,7 @@ class exporter(object):
                                 if i.vsline_id
                                 else ""
                             ),
-                        ),
+                        )
 
                     if wo.operation_id:
                         for wo_sec in wo.secondary_workcenters:
@@ -2929,6 +2979,32 @@ class exporter(object):
                                     wo_sec.workcenter_id.owner
                                     and wo_sec.workcenter_id.owner == sec.workcenter_id
                                 ):
+                                    logger.info(
+                                        '<load quantity="%f" search=%s><resource name=%s/>%s</load>'
+                                        % (
+                                            (
+                                                1
+                                                if not sec.duration
+                                                or wo.operation_id.time_cycle == 0
+                                                else sec.duration
+                                                / wo.operation_idtime_cycle
+                                            ),
+                                            quoteattr(sec.search_mode),
+                                            quoteattr(
+                                                self.map_workcenters[
+                                                    sec.workcenter_id.id
+                                                ]
+                                            ),
+                                            (
+                                                (
+                                                    "<skill name=%s/>"
+                                                    % quoteattr(sec.skill.name)
+                                                )
+                                                if sec.skill
+                                                else ""
+                                            ),
+                                        )
+                                    )
                                     yield '<load quantity="%f" search=%s><resource name=%s/>%s</load>' % (
                                         (
                                             1

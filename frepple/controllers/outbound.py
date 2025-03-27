@@ -3097,7 +3097,7 @@ class exporter(object):
                                     "<loadplan><resource name=%s/></loadplan>"
                                     % quoteattr(
                                         "VS_%s" % f"{int(i.vsline_id.name):02d}"
-                                    ),
+                                    )
                                 )
                                 if i.vsline_id
                                 else ""
@@ -3114,7 +3114,7 @@ class exporter(object):
                                 yield "<loadplan><resource name=%s/></loadplan>" % (
                                     quoteattr(
                                         self.map_workcenters[secondary.workcenter_id.id]
-                                    ),
+                                    )
                                 )
                         yield "</loadplans>"
 

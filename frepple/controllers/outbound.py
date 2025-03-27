@@ -2814,7 +2814,7 @@ class exporter(object):
                         quoteattr("%s - %s" % (suboperation, wo.id)),
                         idx,
                         self.convert_float_time(
-                            max(time_left, 1),  # Miniminum 1 minute remaining :-)
+                            max(time_left, 0),
                             units="minutes",
                         ),
                         quoteattr(location),

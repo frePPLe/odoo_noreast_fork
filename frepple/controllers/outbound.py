@@ -1138,6 +1138,7 @@ class exporter(object):
             "date_end",
             "date_start",
             "price",
+            "currency_id",
             "batching_window",
             "sequence",
             "is_subcontractor",
@@ -1162,6 +1163,21 @@ class exporter(object):
                 itemsuppliers[i["product_tmpl_id"][0]].append(i)
             else:
                 itemsuppliers[i["product_tmpl_id"][0]] = [i]
+
+        # Get the latest exchange rates
+        self.currency = {}
+        for i in self.generator.getData(
+            "res.currency.rate",
+            fields=[
+                "name",
+                "currency_id",
+                "rate",
+            ],
+            order="name desc",
+        ):
+            if i["currency_id"][0] in self.currency:
+                break
+            self.currency[i["currency_id"][0]] = i["rate"]
 
         # Read the products
         first = True
@@ -1316,9 +1332,28 @@ class exporter(object):
                         ):
                             r["multiple_qty"] = sup["multiple_qty"]
                         if sup["price"] and (
-                            not r["price"] or sup["price"] < r["price"]
+                            not r["price"]
+                            or (
+                                sup["price"]
+                                / self.currency.get(
+                                    (
+                                        sup["currency_id"][0]
+                                        if sup["currency_id"]
+                                        else "unknown"
+                                    ),
+                                    1,
+                                )
+                            )
+                            < r["price"]
                         ):
-                            r["price"] = sup["price"]
+                            r["price"] = sup["price"] / self.currency.get(
+                                (
+                                    sup["currency_id"][0]
+                                    if sup["currency_id"]
+                                    else "unknown"
+                                ),
+                                1,
+                            )
                         if sup["date_end"] and (
                             not r["date_end"] or sup["date_end"] > r["date_end"]
                         ):
@@ -1330,7 +1365,18 @@ class exporter(object):
                             "batching_window": sup["batching_window"] or 0,
                             "min_qty": sup["min_qty"],
                             "multiple_qty": sup["multiple_qty"],
-                            "price": max(0, sup["price"]),
+                            "price": max(
+                                0,
+                                sup["price"]
+                                / self.currency.get(
+                                    (
+                                        sup["currency_id"][0]
+                                        if sup["currency_id"]
+                                        else "unknown"
+                                    ),
+                                    1,
+                                ),
+                            ),
                             "date_end": sup["date_end"],
                         }
                 if suppliers:

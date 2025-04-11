@@ -2118,6 +2118,7 @@ class exporter(object):
                 "move_ids",
                 "dpass",
             ],
+            order="delivery_date asc",
         )
 
         # Get all sales orders
@@ -2165,14 +2166,26 @@ class exporter(object):
             )
         }
 
-        def getReservedQuantity(stock_move_id):
+        # tracks for a stock move the reserved quantity that has already been attibuted
+        consumed_reservations = {}
+
+        def getReservedQuantity(stock_move_id, qty_max):
             reserved_quantity = 0
             if stock_move_id in stock_moves_dict:
                 mv = stock_moves_dict[stock_move_id]
-                reserved_quantity = mv["quantity"] or 0
+                reserved_quantity = min(
+                    qty_max,
+                    (mv["quantity"] - consumed_reservations.get(stock_move_id, 0)) or 0,
+                )
+                if reserved_quantity > 0:
+                    consumed_reservations[stock_move_id] = (
+                        consumed_reservations.get(stock_move_id, 0) + reserved_quantity
+                    )
                 for i in mv["move_orig_ids"]:
                     if i != stock_move_id:
-                        reserved_quantity += getReservedQuantity(i)
+                        reserved_quantity += getReservedQuantity(
+                            i, qty_max - reserved_quantity
+                        )
             return reserved_quantity
 
         # Generate the demand records
@@ -2248,7 +2261,7 @@ class exporter(object):
                                 self.product_product[i["product_id"][0]]["template"],
                             )
                             reserved_quantity = (
-                                getReservedQuantity(mv_id)
+                                getReservedQuantity(mv_id, qty)
                                 if self.respect_reservations
                                 else 0
                             )
@@ -2790,9 +2803,9 @@ class exporter(object):
                     if not consumed_item:
                         continue
                     qty_flow = max(
-                            0,
-                            mv.product_qty
-                            - (mv.quantity if self.respect_reservations else 0),
+                        0,
+                        mv.product_qty
+                        - (mv.quantity if self.respect_reservations else 0),
                     )
                     # subtract the reserved quantity if product is twice in the BOM
                     reserved_quantity[(i["name"], mv.product_id.id)] = max(

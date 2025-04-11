@@ -2118,6 +2118,7 @@ class exporter(object):
                 "move_ids",
                 "dpass",
             ],
+            order="product_id.id, delivery_date",
         )
 
         # Get all sales orders
@@ -2165,6 +2166,8 @@ class exporter(object):
             )
         }
 
+        reserved_consumed = {}
+
         def getReservedQuantity(stock_move_id):
             reserved_quantity = 0
             if stock_move_id in stock_moves_dict:
@@ -2172,7 +2175,10 @@ class exporter(object):
                 reserved_quantity = mv["quantity"] or 0
                 for i in mv["move_orig_ids"]:
                     if i != stock_move_id:
-                        reserved_quantity += getReservedQuantity(i)
+                        resqua = getReservedQuantity(i)
+                        resqua = resqua - reserved_consumed.get(i, 0)
+                        reserved_consumed[i] = resqua
+                        reserved_quantity += resqua
             return reserved_quantity
 
         # Generate the demand records
@@ -2886,14 +2892,10 @@ class exporter(object):
                         elif not first_wo:
                             continue
 
-                        qty_flow = self.convert_qty_uom(
-                            max(
-                                0,
-                                mv.product_qty
-                                - (mv.quantity if self.respect_reservations else 0),
-                            ),
-                            mv.product_uom.id,
-                            item["template"],
+                        qty_flow = max(
+                            0,
+                            mv.product_qty
+                            - (mv.quantity if self.respect_reservations else 0),
                         )
                         # subtract the reserved quantity if product is twice in the BOM
                         reserved_quantity[(i["name"], mv["product_id"][0])] = max(

@@ -1142,6 +1142,7 @@ class exporter(object):
             "batching_window",
             "sequence",
             "is_subcontractor",
+            "product_uom",
         ]
         try:
             tmp = self.generator.getData(
@@ -1333,7 +1334,7 @@ class exporter(object):
                             r["multiple_qty"] = sup["multiple_qty"]
                         if sup["price"] and (
                             not r["price"]
-                            or (
+                            or self.convert_qty_uom(
                                 sup["price"]
                                 / self.currency.get(
                                     (
@@ -1342,7 +1343,9 @@ class exporter(object):
                                         else "unknown"
                                     ),
                                     1,
-                                )
+                                ),
+                                sup["product_uom"][0],
+                                tmpl["id"],
                             )
                             < r["price"]
                         ):
@@ -1365,17 +1368,21 @@ class exporter(object):
                             "batching_window": sup["batching_window"] or 0,
                             "min_qty": sup["min_qty"],
                             "multiple_qty": sup["multiple_qty"],
-                            "price": max(
-                                0,
-                                sup["price"]
-                                / self.currency.get(
-                                    (
-                                        sup["currency_id"][0]
-                                        if sup["currency_id"]
-                                        else "unknown"
+                            "price": self.convert_qty_uom(
+                                max(
+                                    0,
+                                    sup["price"]
+                                    / self.currency.get(
+                                        (
+                                            sup["currency_id"][0]
+                                            if sup["currency_id"]
+                                            else "unknown"
+                                        ),
+                                        1,
                                     ),
-                                    1,
                                 ),
+                                sup["product_uom"][0],
+                                tmpl["id"],
                             ),
                             "date_end": sup["date_end"],
                         }

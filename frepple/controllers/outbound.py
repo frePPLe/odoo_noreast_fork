@@ -2722,7 +2722,7 @@ class exporter(object):
 
             # Create a record for the MO
             # Option 1: compute MO end date based on the start date
-            yield '<operationplan type="MO" reference=%s batch=%s start="%s" quantity="%s" status="%s">%s%s%s%s%s%s%s\n' % (
+            yield '<operationplan type="MO" reference=%s batch=%s start="%s" quantity="%s" status="%s">%s%s%s%s%s%s%s%s\n' % (
                 quoteattr(i.name),
                 quoteattr(batch),
                 startdate,
@@ -2784,6 +2784,14 @@ class exporter(object):
                         % (quoteattr(i.sale_order_id.name),)
                     )
                     if i.sale_order_id
+                    else ""
+                ),
+                (
+                    (
+                        '<stringproperty name="origin" value=%s/>'
+                        % (quoteattr(i.origin),)
+                    )
+                    if i.origin
                     else ""
                 ),
             )

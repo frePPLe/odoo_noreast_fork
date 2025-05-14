@@ -2788,7 +2788,7 @@ class exporter(object):
                 ),
                 (
                     (
-                        '<stringproperty name="origin" value=%s/>'
+                        '<stringproperty name="odoo_origin" value=%s/>'
                         % (quoteattr(i.origin),)
                     )
                     if i.origin

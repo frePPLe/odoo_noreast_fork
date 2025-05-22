@@ -3337,10 +3337,9 @@ class exporter(object):
                 stock_lot.name as lot_name,
                 stock_lot.expiration_date
                 FROM stock_quant
-                INNER JOIN stock_location ON stock_quant.location_id = stock_location.id
                 left outer join stock_lot on stock_quant.lot_id = stock_lot.id
                 and stock_lot.product_id = stock_quant.product_id
-                WHERE (stock_quant.quantity > 0 or stock_location.name = 'POSTPRD')
+                WHERE quantity > 0
                 GROUP BY stock_quant.product_id,
                 stock_quant.location_id,
                 stock_lot.name,
@@ -3428,7 +3427,7 @@ class exporter(object):
                 "SELECT product_id, stock_quant.location_id, sum(quantity), sum(reserved_quantity) "
                 "FROM stock_quant "
                 "INNER JOIN stock_location ON stock_quant.location_id = stock_location.id "
-                "WHERE (quantity > 0 or stock_location.name = 'POSTPRD') "
+                "WHERE quantity > 0 "
                 "AND stock_location.scrap_location is distinct from true "
                 "AND stock_location.return_location is distinct from true "
                 "AND stock_location.usage = 'internal' "

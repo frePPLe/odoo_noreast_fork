@@ -548,16 +548,7 @@ class importer(object):
                                     # Can't filter on the computed display_name field in the search...
                                     continue
                                 if wo:
-                                    logger.info(
-                                        "processing %s"(
-                                            wo.name,
-                                        )
-                                    )
                                     if elem.get("end"):
-                                        logger.info(
-                                            "I have an end date and it is %s"
-                                            % (elem.get("end"),)
-                                        )
                                         data = {
                                             "date_start": self.timezone.localize(
                                                 datetime.strptime(
@@ -577,7 +568,6 @@ class importer(object):
                                             .replace(tzinfo=None),
                                         }
                                     else:
-                                        logger.info("I don't have an end date")
                                         data = {
                                             "date_start": self.timezone.localize(
                                                 datetime.strptime(

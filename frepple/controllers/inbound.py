@@ -733,7 +733,7 @@ class importer(object):
                                         # Here we are already updating it earlier
                                         if "start" in rec:
                                             logger.info(
-                                                f"updating wo {wo.operation_id.name} with date_start = {rec["start"]}"
+                                                f"updating wo {wo.operation_id.name} with date_start = {rec['start']}"
                                             )
                                             wo.date_start = rec["start"]
                                             if not create:

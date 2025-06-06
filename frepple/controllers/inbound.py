@@ -731,13 +731,6 @@ class importer(object):
                                         # By default odoo populates the scheduled start date field only when you confirm and plan
                                         # the manufacturing order.
                                         # Here we are already updating it earlier
-                                        if "start" in rec:
-                                            logger.info(
-                                                f"updating wo {wo.operation_id.name} with date_start = {rec['start']}"
-                                            )
-                                            wo.date_start = rec["start"]
-                                            if not create:
-                                                wo.write({"date_start": wo.date_start})
                                         if "end" in rec:
                                             logger.info(
                                                 f"updating wo {wo.operation_id.name} with date_finished = {rec['end']}"
@@ -747,6 +740,14 @@ class importer(object):
                                                 wo.write(
                                                     {"date_finished": wo.date_finished}
                                                 )
+
+                                        if "start" in rec:
+                                            logger.info(
+                                                f"updating wo {wo.operation_id.name} with date_start = {rec['start']}"
+                                            )
+                                            wo.date_start = rec["start"]
+                                            if not create:
+                                                wo.write({"date_start": wo.date_start})
 
                                         if "block" in rec:
                                             wo.block = int(rec["block"])

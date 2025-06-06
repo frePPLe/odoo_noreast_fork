@@ -736,6 +736,7 @@ class importer(object):
                                             if not create:
                                                 wo.write({"date_start": wo.date_start})
                                         if "end" in rec:
+                                            logger.info(f"updating wo {wo.operation_id.name} with date_finished = {rec["end"]}")
                                             wo.date_finished = rec["end"]
                                             if not create:
                                                 wo.write(

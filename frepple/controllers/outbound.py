@@ -2661,7 +2661,6 @@ class exporter(object):
                 search=[
                     ("state", "in", ["partially_available", "assigned"]),
                     ("production_id", "=", False),
-                    ("workorder_id", "=", False),
                     ("origin", "in", confirmed_mos),
                 ],
                 fields=["origin", "product_id", "quantity"],

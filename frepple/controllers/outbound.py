@@ -3123,9 +3123,9 @@ class exporter(object):
                     else:
                         state = "confirmed"
                     try:
-                        if wo.date_finished:
+                        if (wo.expected_end_date or wo.date_finished):
                             wo_date = ' end="%s"' % self.formatDateTime(
-                                wo.date_finished
+                                (wo.expected_end_date or wo.date_finished)
                             )
                         else:
                             if wo.is_user_working:
@@ -3133,11 +3133,11 @@ class exporter(object):
                             else:
                                 dt = max(
                                     (
-                                        wo.date_start
-                                        if wo.date_start
+                                        (wo.expected_start_date or wo.date_start)
+                                        if (wo.expected_start_date or wo.date_start)
                                         else (
-                                            wo.date_start
-                                            if wo.date_start
+                                            (wo.expected_start_date or wo.date_start)
+                                            if (wo.expected_start_date or wo.date_start)
                                             else i.date_start
                                         )
                                     ),

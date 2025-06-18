@@ -1954,7 +1954,7 @@ class exporter(object):
                                     )
                                 )
 
-                            yield "<suboperation>" '<operation name=%s %spriority="%s" %s="%s" xsi:type="%s">\n' "<location name=%s/>\n" '<doubleproperty name="employee_ratio" value="%s"/>' '<stringproperty name="flowtype" value="%s"/>' '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
+                            yield "<suboperation>" '<operation name=%s %spriority="%s" %s="%s" xsi:type="%s">\n' "<location name=%s/>\n" '<doubleproperty name="employee_ratio" value="%s"/>' '<stringproperty name="flowtype" value=%s/>' '<loads><load quantity="%f" search=%s><resource name=%s/>%s</load>%s</loads>\n' % (
                                 quoteattr(name),
                                 (
                                     ("description=%s " % quoteattr(i["code"]))
@@ -2900,7 +2900,7 @@ class exporter(object):
                             units="minutes",
                         ),
                         quoteattr(location),
-                        ('<stringproperty name="flowtype" value=%s/>' % (wo.flowtype,)) if wo.flowtype else "",
+                        ('<stringproperty name="flowtype" value="%s"/>' % (wo.flowtype,)) if wo.flowtype else "",
                     )
                     idx += 10
                     # dictionary needed as BOM in Odoo might have multiple lines with the same product

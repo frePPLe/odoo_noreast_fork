@@ -2892,7 +2892,7 @@ class exporter(object):
                                     (now - tm.date_start).total_seconds() / 60
                                 )
 
-                    yield '<suboperation><operation name=%s priority="%s" type="operation_fixed_time" duration="%s"><location name=%s/><flows>' % (
+                    yield '<suboperation><operation name=%s priority="%s" type="operation_fixed_time" duration="%s"><location name=%s/>%s<flows>' % (
                         quoteattr("%s - %s" % (suboperation, wo.id)),
                         idx,
                         self.convert_float_time(
@@ -2900,6 +2900,7 @@ class exporter(object):
                             units="minutes",
                         ),
                         quoteattr(location),
+                        ('<stringproperty name="flowtype" value=%s/>' % (wo.flowtype,)) if wo.flowtype else "",
                     )
                     idx += 10
                     # dictionary needed as BOM in Odoo might have multiple lines with the same product
@@ -2999,29 +3000,6 @@ class exporter(object):
                     elif (
                         wo.workcenter_id and wo.workcenter_id.id in self.map_workcenters
                     ):
-                        logger.info(
-                            "<loads><load><resource name=%s/></load>%s</loads>"
-                            % (
-                                quoteattr(self.map_workcenters[wo.workcenter_id.id]),
-                                (
-                                    (
-                                        '<load quantity="%f"><resource name=%s/></load>'
-                                        % (
-                                            (
-                                                block_employee.get(wo.block, 1)
-                                                if wo.flowdriver
-                                                else 1
-                                            ),
-                                            quoteattr(
-                                                "VS_%s" % f"{int(i.vsline_id.name):02d}"
-                                            ),
-                                        )
-                                    )
-                                    if i.vsline_id
-                                    else ""
-                                ),
-                            )
-                        )
                         yield "<loads><load><resource name=%s/></load>%s</loads>" % (
                             quoteattr(self.map_workcenters[wo.workcenter_id.id]),
                             (
@@ -3123,7 +3101,7 @@ class exporter(object):
                     else:
                         state = "confirmed"
                     try:
-                        if (wo.expected_end_date or wo.date_finished):
+                        if wo.expected_end_date or wo.date_finished:
                             wo_date = ' end="%s"' % self.formatDateTime(
                                 (wo.expected_end_date or wo.date_finished)
                             )

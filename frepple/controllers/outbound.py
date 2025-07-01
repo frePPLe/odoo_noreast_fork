@@ -1402,22 +1402,11 @@ class exporter(object):
                 if suppliers:
                     yield "<itemsuppliers>\n"
                     for k, v in suppliers.items():
-                        batching_window = v["batching_window"]
-                        # check the product class
-                        if tmpl["purchase_class"]:
-                            if tmpl["purchase_class"].lower() == "a":
-                                batching_window = 7
-                            elif tmpl["purchase_class"].lower() == "b":
-                                batching_window = 7
-                            elif tmpl["purchase_class"].lower() == "c":
-                                batching_window = 7
-                            elif tmpl["purchase_class"].lower() == "d":
-                                batching_window = 7
 
                         yield '<itemsupplier leadtime="P%dD" priority="%s" batchwindow="P%dD" size_minimum="%f" size_multiple="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
                             v["delay"],
                             v["sequence"] or 1,
-                            batching_window or 0,
+                            v["batching_window"] or 0,
                             v["min_qty"],
                             v["multiple_qty"],
                             max(0, v["price"]),
@@ -2900,8 +2889,7 @@ class exporter(object):
                             units="minutes",
                         ),
                         quoteattr(location),
-                        ('<stringproperty name="flowtype" value="%s"/>' % (wo.flowtype,)) if wo.flowtype else "",
-                    )
+                    ('<stringproperty name="flowtype" value="%s"/>' % (wo.flowtype,))          if wo.flowtype else "",                    )
                     idx += 10
                     # dictionary needed as BOM in Odoo might have multiple lines with the same product
                     operation_materials = {}

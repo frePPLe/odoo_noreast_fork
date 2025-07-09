@@ -2899,7 +2899,7 @@ class exporter(object):
                         ),
                         (
                             (
-                                '<stringproperty name="original_employee_ratio" value="%s"/>'
+                                '<stringproperty name="employee_ratio" value="%s"/>'
                                 % (int(wo.employee_ratio),)
                             )
                             if wo.employee_ratio

@@ -2881,7 +2881,7 @@ class exporter(object):
                                     (now - tm.date_start).total_seconds() / 60
                                 )
 
-                    yield '<suboperation><operation name=%s priority="%s" type="operation_fixed_time" duration="%s"><location name=%s/>%s%s<flows>' % (
+                    yield '<suboperation><operation name=%s priority="%s" type="operation_fixed_time" duration="%s"><location name=%s/>%s<flows>' % (
                         quoteattr("%s - %s" % (suboperation, wo.id)),
                         idx,
                         self.convert_float_time(
@@ -2895,14 +2895,6 @@ class exporter(object):
                                 % (wo.flowtype,)
                             )
                             if wo.flowtype
-                            else ""
-                        ),
-                        (
-                            (
-                                '<stringproperty name="employee_ratio" value="%s"/>'
-                                % (int(wo.employee_ratio),)
-                            )
-                            if wo.employee_ratio
                             else ""
                         ),
                     )

@@ -2868,24 +2868,15 @@ class exporter(object):
                         suboperation = suboperation[0:300]
 
                     # Get remaining duration of the WO
-                    time_left = (
-                        wo.expected_end_date - wo.expected_start_date
-                        if wo.expected_end_date and wo.expected_start_date
-                        else wo.date_finished - wo.date_start
-                    )
-                    if not time_left:
+                    if wo.flowdriver == False:
+                        time_left = 0
+                    else:
                         time_left = (
-                            0
-                            if wo.flowdriver == False
-                            else wo.duration_expected - wo.duration_unit
+                            wo.expected_end_date - wo.expected_start_date
+                            if wo.expected_end_date and wo.expected_start_date
+                            else wo.date_finished - wo.date_start
                         )
-                    if wo.is_user_working and wo.time_ids:
-                        # The WO is currently being worked on
-                        for tm in wo.time_ids:
-                            if tm.date_start and not tm.date_end:
-                                time_left -= round(
-                                    (now - tm.date_start).total_seconds() / 60
-                                )
+                        time_left = time_left.total_seconds() / 60 if time_left else 0
 
                     yield '<suboperation><operation name=%s priority="%s" type="operation_fixed_time" duration="%s"><location name=%s/>%s<flows>' % (
                         quoteattr("%s - %s" % (suboperation, wo.id)),

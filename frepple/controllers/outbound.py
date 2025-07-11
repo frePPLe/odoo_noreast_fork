@@ -2869,10 +2869,16 @@ class exporter(object):
 
                     # Get remaining duration of the WO
                     time_left = (
-                        0
-                        if wo.flowdriver == False
-                        else wo.duration_expected - wo.duration_unit
+                        wo.expected_end_date - wo.expected_start_date
+                        if wo.expected_end_date and wo.expected_start_date
+                        else wo.date_finished - wo.date_start
                     )
+                    if not time_left:
+                        time_left = (
+                            0
+                            if wo.flowdriver == False
+                            else wo.duration_expected - wo.duration_unit
+                        )
                     if wo.is_user_working and wo.time_ids:
                         # The WO is currently being worked on
                         for tm in wo.time_ids:

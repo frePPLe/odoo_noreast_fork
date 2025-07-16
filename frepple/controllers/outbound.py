@@ -2871,12 +2871,16 @@ class exporter(object):
                     if wo.flowdriver == False:
                         time_left = 0
                     else:
-                        time_left = (
-                            wo.expected_end_date - wo.expected_start_date
-                            if wo.expected_end_date and wo.expected_start_date
-                            else wo.date_finished - wo.date_start
-                        )
-                        time_left = time_left.total_seconds() / 60 if time_left else 0
+                        time_left = wo.flowtime
+                        if time_left == 0:
+                            (
+                                wo.expected_end_date - wo.expected_start_date
+                                if wo.expected_end_date and wo.expected_start_date
+                                else wo.date_finished - wo.date_start
+                            )
+                            time_left = (
+                                time_left.total_seconds() / 60 if time_left else 0
+                            )
 
                     yield '<suboperation><operation name=%s priority="%s" type="operation_fixed_time" duration="%s"><location name=%s/>%s<flows>' % (
                         quoteattr("%s - %s" % (suboperation, wo.id)),

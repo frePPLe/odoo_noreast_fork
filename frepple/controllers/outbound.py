@@ -2282,15 +2282,7 @@ class exporter(object):
                                 else 0
                             )
                             due = self.formatDateTime(
-                                (
-                                    datetime.combine(
-                                        i["delivery_date"], datetime.min.time()
-                                    )
-                                    if i["delivery_date"]
-                                    else None
-                                )
-                                or sm["date"]
-                                or j["date_order"]
+                                i["delivery_date"] or sm["date"] or j["date_order"]
                             )
 
                             yield (

@@ -27,8 +27,7 @@ import logging
 import pytz
 import xmlrpc.client
 from xml.sax.saxutils import quoteattr
-from datetime import date, datetime, timedelta, time
-from pytz import timezone
+from datetime import date, datetime, timedelta, time, timezone
 import ssl
 from zoneinfo import ZoneInfo
 

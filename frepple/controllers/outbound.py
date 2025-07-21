@@ -27,11 +27,9 @@ import logging
 import pytz
 import xmlrpc.client
 from xml.sax.saxutils import quoteattr
-from datetime import date, datetime, timedelta, time
+from datetime import datetime, timedelta
 from pytz import timezone
 import ssl
-from zoneinfo import ZoneInfo
-
 
 try:
     import odoo
@@ -158,7 +156,7 @@ class exporter(object):
         database=None,
         company=None,
         mode=1,
-        timezone="UTC",
+        timezone=None,
         singlecompany=False,
         version="0.0.0.unknown",
         delta=999,
@@ -470,20 +468,9 @@ class exporter(object):
         )
 
     def formatDateTime(self, d, tmzone=None):
-        # 1. Ensure d is a datetime
-        if isinstance(d, date) and not isinstance(d, datetime):
-            # A pure date: treat as midnight UTC
-            d = datetime.combine(d, time(0, 0))
-
-        # 2. Attach UTC tzinfo (now it's aware UTC)
-        d = d.replace(tzinfo=timezone.utc)
-
-        # 3. Convert to target tz
-        tz = ZoneInfo(tmzone or "America/Toronto")
-        d_local = d.astimezone(tz)
-
-        # 4. Format
-        return d_local.strftime(self.timeformat)
+        if not isinstance(d, datetime):
+            d = datetime.fromisoformat(d)
+        return d.astimezone(timezone(tmzone or self.timezone)).strftime(self.timeformat)
 
     def export_users(self):
         users = []

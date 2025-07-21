@@ -471,8 +471,9 @@ class exporter(object):
     def formatDateTime(self, d, tmzone=None):
         # 1. Ensure d is a datetime
         if isinstance(d, date) and not isinstance(d, datetime):
-            # A pure date: treat as midnight UTC
-            d = datetime.combine(d, time(0, 0))
+            # A pure date: treat as midnight UTC and no conversion
+            dt_midnight = datetime.combine(d, time(0, 0))
+            return dt_midnight.strftime(self.timeformat)
 
         # 2. Attach UTC tzinfo (now it's aware UTC)
         d = d.replace(tzinfo=timezone.utc)

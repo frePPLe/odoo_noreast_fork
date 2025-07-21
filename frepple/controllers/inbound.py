@@ -53,12 +53,9 @@ class importer(object):
         #    In this mode mode we are not erasing any previous proposals.
         self.mode = int(mode)
 
-        # Pick up the timezone of the connector user (or UTC if not set)
-        try:
-            usr = self.env["res.users"].browse(ids=[req.uid]).read(["tz"])[0]
-            self.timezone = timezone(usr["tz"] or "America/Toronto")
-        except Exception:
-            self.timezone = timezone("America/Toronto")
+        # Pick up the UTC timezone as the times are already converted to UTC
+        # before reaching inbound.py
+        self.timezone = timezone("UTC")
 
         # User to be set as responsible on new objects in incremental exports
         self.actual_user = req.httprequest.form.get("actual_user", None)

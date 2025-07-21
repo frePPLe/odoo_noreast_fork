@@ -2226,13 +2226,7 @@ class exporter(object):
                 # Not interested in this sales order...
                 continue
             due = self.formatDateTime(
-                (
-                    datetime.combine(i["delivery_date"], datetime.min.time())
-                    if i["delivery_date"]
-                    else None
-                )
-                or j.get("commitment_date", False)
-                or j["date_order"]
+                i["delivery_date"] or j.get("commitment_date") or j["date_order"]
             )
             priority = 10  # We give all customer orders the same default priority
             # but we correct it if dpass exists

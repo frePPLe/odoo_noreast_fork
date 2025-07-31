@@ -678,6 +678,9 @@ class importer(object):
                                         if soline
                                         else (so.commitment_date if so else None)
                                     ),
+                                    "so_line_record_id": (
+                                        soline.id if soline else None
+                                    ),
                                     "summary_notes": summary_notes,
                                 }
                             )

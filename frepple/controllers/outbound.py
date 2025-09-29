@@ -859,7 +859,7 @@ class exporter(object):
         for i in self.generator.getData(
             "res.partner",
             search=["|", ("parent_id", "=", False), ("parent_id.active", "=", True)],
-            fields=["name", "parent_id", "is_company"],
+            fields=["name", "parent_id", "is_company", "mo_batch_window"],
             order="parent_id desc",
         ):
             if first:
@@ -868,7 +868,12 @@ class exporter(object):
                 first = False
             if i["is_company"]:
                 name = "%s %s" % (i["name"], i["id"])
-                yield "<customer name=%s/>\n" % quoteattr(name)
+                yield "<customer name=%s>" % quoteattr(name)
+                if i["mo_batch_window"] is not None:
+                    yield '<stringproperty name="mo_batch_window" value="%s"/>' % (
+                        i["mo_batch_window"],
+                    )
+                yield "</customer>"
             elif i["parent_id"] == False or i["id"] == i["parent_id"][0]:
                 name = "Individuals"
                 if not individual_inserted:
@@ -1103,6 +1108,7 @@ class exporter(object):
                 "tertiary_vsline",
                 "purchase_class",
                 "waste_mo_increment",
+                "batchwindow_max_unit",
             ]
             + (
                 [
@@ -1296,6 +1302,10 @@ class exporter(object):
             if tmpl["waste_mo_increment"]:
                 yield '<stringproperty name="waste" value="%s"/>' % (
                     tmpl["waste_mo_increment"],
+                )
+            if tmpl["batchwindow_max_unit"] is not None:
+                yield '<stringproperty name="batchwindow_max_unit" value="%s"/>' % (
+                    tmpl["batchwindow_max_unit"],
                 )
 
             # Export suppliers for the item, if the item is allowed to be purchased

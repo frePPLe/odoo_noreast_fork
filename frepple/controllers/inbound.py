@@ -645,11 +645,9 @@ class importer(object):
                         sale_order_lines = elem.get("sale_order_lines")
                         so_lines_records_ids = None
                         if sale_order_lines:
-                            so_lines_records_ids = []
-                            tmp = []
-                            for sol in sale_order_lines.split(","):
-                                tmp.append(sol)
-                            so_lines_records_ids = [Command.set(tmp)]
+                            so_lines_records_ids = [
+                                (6, 0, sale_order_lines.split(",")),
+                            ]
 
                         summary_notes = elem.get("summary_notes")
 

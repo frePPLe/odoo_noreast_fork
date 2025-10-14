@@ -23,6 +23,8 @@
 #
 
 import odoo
+from odoo import Command
+
 import logging
 import math
 from xml.etree.cElementTree import iterparse
@@ -632,13 +634,23 @@ class importer(object):
                         soline = None
                         so_name = elem.get("sale_order")
                         if so_name:
-                            so_name_stripped, line_id = so_name.rsplit(" ", 1)
+                            so_name_stripped, line_id = so_name.split(" ")[:2]
                             so = sale_order.with_context(context).search(
                                 [("name", "=", so_name_stripped)]
                             )
                             soline = sale_order_line.with_context(context).search(
                                 [("id", "=", line_id)]
                             )
+
+                        sale_order_lines = elem.get("sale_order_lines")
+                        so_lines_records_ids = None
+                        if sale_order_lines:
+                            so_lines_records_ids = []
+                            tmp = []
+                            for sol in sale_order_lines.split(","):
+                                sol_1, sol2 = sol.split(" ")[:2]
+                                tmp.append(sol2)
+                            so_lines_records_ids = [Command.set(tmp)]
 
                         summary_notes = elem.get("summary_notes")
 
@@ -681,6 +693,7 @@ class importer(object):
                                     "so_line_record_id": (
                                         soline.id if soline else None
                                     ),
+                                    "so_lines_records_ids": so_lines_records_ids,
                                     "summary_notes": summary_notes,
                                 }
                             )
@@ -717,6 +730,7 @@ class importer(object):
                                         # "date_finished": elem.get("end"),
                                         "origin": "frePPLe",
                                         "vsline_id": vsline,
+                                        "so_lines_records_ids": so_lines_records_ids,
                                     }
                                 )
                                 mo_references[elem.get("reference")] = mo

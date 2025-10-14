@@ -648,8 +648,7 @@ class importer(object):
                             so_lines_records_ids = []
                             tmp = []
                             for sol in sale_order_lines.split(","):
-                                sol_1, sol2 = sol.split(" ")[:2]
-                                tmp.append(sol2)
+                                tmp.append(sol)
                             so_lines_records_ids = [Command.set(tmp)]
 
                         summary_notes = elem.get("summary_notes")

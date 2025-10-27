@@ -645,8 +645,11 @@ class importer(object):
                         sale_order_lines = elem.get("sale_order_lines")
                         so_lines_records_ids = None
                         if sale_order_lines:
+                            tmp_sol = sale_order_line.browse(
+                                sale_order_lines.split(",")
+                            )
                             so_lines_records_ids = [
-                                (6, 0, sale_order_lines.split(",")),
+                                (6, 0, tmp_sol.ids),
                             ]
 
                         summary_notes = elem.get("summary_notes")

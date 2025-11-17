@@ -2657,7 +2657,7 @@ class exporter(object):
             for i in self.generator.getData(
                 "stock.move",
                 search=[
-                    ("state", "in", ["partially_available", "assigned"]),
+                    ("state", "in", ["partially_available", "assigned", "done"]),
                     ("production_id", "=", False),
                     ("origin", "in", confirmed_mos),
                 ],

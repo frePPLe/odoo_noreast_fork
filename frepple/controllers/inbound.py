@@ -784,7 +784,7 @@ class importer(object):
                                                 wo.write({"flowtime": wo.flowtime})
 
                                         if "flowtype" in rec:
-                                            wo.flowtype = float(rec["flowtype"])
+                                            wo.flowtype = rec["flowtype"]
                                             if not create:
                                                 wo.write({"flowtype": wo.flowtype})
 

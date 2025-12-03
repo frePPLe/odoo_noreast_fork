@@ -228,6 +228,11 @@ class importer(object):
                     flowtime = elem.get("flowtime")
                     if flowtime:
                         wo["flowtime"] = flowtime
+
+                    flowtype = elem.get("flowtype")
+                    if flowtype:
+                        wo["flowtype"] = flowtype
+
                     wo_data.append(wo)
                 except Exception:
                     pass
@@ -777,6 +782,11 @@ class importer(object):
                                             wo.flowtime = float(rec["flowtime"])
                                             if not create:
                                                 wo.write({"flowtime": wo.flowtime})
+
+                                        if "flowtype" in rec:
+                                            wo.flowtype = float(rec["flowtype"])
+                                            if not create:
+                                                wo.write({"flowtype": wo.flowtype})
 
                                         for res in rec["workcenters"]:
                                             wc = mfg_workcenter.browse(res["id"])

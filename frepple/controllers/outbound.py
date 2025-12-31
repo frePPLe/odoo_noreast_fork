@@ -2660,12 +2660,19 @@ class exporter(object):
                     ("state", "in", ["partially_available", "assigned"]),
                     ("production_id", "=", False),
                     ("origin", "in", confirmed_mos),
+                    ("product_id", "!=", False),
                 ],
-                fields=["origin", "product_id", "quantity"],
+                fields=["origin", "product_id", "quantity", "product_uom"],
             ):
+                if i["product_id"][0] not in self.product_product:
+                    continue
                 reserved_quantity[(i["origin"], i["product_id"][0])] = (
                     reserved_quantity.get((i["origin"], i["product_id"][0]), 0)
-                    + i["quantity"]
+                + self.convert_qty_uom(
+                  i["quantity"],
+                  i["product_uom"][0],
+                  self.product_product[i["product_id"][0]]["template"],
+                )
                 )
 
         yield "<!-- manufacturing orders in progress -->\n"

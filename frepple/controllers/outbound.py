@@ -2120,11 +2120,14 @@ class exporter(object):
         search = (
             [
                 "&",
+                "&",
                 ("product_id", "!=", False),
                 ("order_id.state", "not in", ["draft", "sent", "cancel"]),
+                ("on_hold", "!=", True),
             ]
             if self.delta >= 999
             else [
+                "&",
                 "&",
                 "&",
                 ("product_id", "!=", False),
@@ -2134,6 +2137,7 @@ class exporter(object):
                     datetime.now() - timedelta(days=self.delta),
                 ),
                 ("order_id.state", "not in", ["draft", "sent", "cancel"]),
+                ("on_hold", "!=", True),
             ]
         )
         so_line = self.generator.getData(

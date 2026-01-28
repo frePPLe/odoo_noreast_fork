@@ -2670,13 +2670,14 @@ class exporter(object):
             ):
                 if i["product_id"][0] not in self.product_product:
                     continue
-                reserved_quantity[(i["origin"], i["product_id"][0])] = (
-                    reserved_quantity.get((i["origin"], i["product_id"][0]), 0)
-                + self.convert_qty_uom(
-                  i["quantity"],
-                  i["product_uom"][0],
-                  self.product_product[i["product_id"][0]]["template"],
-                )
+                reserved_quantity[
+                    (i["origin"], i["product_id"][0])
+                ] = reserved_quantity.get(
+                    (i["origin"], i["product_id"][0]), 0
+                ) + self.convert_qty_uom(
+                    i["quantity"],
+                    i["product_uom"][0],
+                    self.product_product[i["product_id"][0]]["template"],
                 )
 
         yield "<!-- manufacturing orders in progress -->\n"
@@ -2855,10 +2856,11 @@ class exporter(object):
                             + (-qty_flow / qty)
                         )
                 for key in operation_materials:
-                    yield '<flow xsi:type="flow_start" quantity="%s"><item name=%s/></flow>\n' % (
-                        operation_materials[key],
-                        quoteattr(key),
-                    )
+                    if operation_materials[key] <= -0.01:
+                        yield '<flow xsi:type="flow_start" quantity="%s"><item name=%s/></flow>\n' % (
+                            operation_materials[key],
+                            quoteattr(key),
+                        )
                 yield '<flow xsi:type="flow_end" quantity="1"><item name=%s/></flow>\n' % (
                     quoteattr(item["name"]),
                 )
@@ -2950,7 +2952,7 @@ class exporter(object):
                             ),
                         )
 
-                        if qty_flow > 0:
+                        if qty_flow > 0 and (-qty_flow / qty) <= -0.01:
                             yield '<flow quantity="%s"><item name=%s/></flow>\n' % (
                                 -qty_flow / qty,
                                 quoteattr(item["name"]),

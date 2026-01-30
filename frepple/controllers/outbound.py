@@ -24,6 +24,7 @@
 
 import json
 import logging
+from operator import attrgetter
 import pytz
 import xmlrpc.client
 from xml.sax.saxutils import quoteattr
@@ -2804,7 +2805,7 @@ class exporter(object):
 
             # Collect work order info
             if self.manage_work_orders:
-                wo_list = sorted(i.workorder_ids or [])
+                wo_list = sorted(i.workorder_ids or [], key=attrgetter("id"))
             else:
                 wo_list = []
 

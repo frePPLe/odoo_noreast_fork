@@ -2816,7 +2816,7 @@ class exporter(object):
 
             # Collect work order info
             if self.manage_work_orders:
-                wo_list = i.workorder_ids
+                wo_list = sorted(i.workorder_ids or [])
             else:
                 wo_list = []
 

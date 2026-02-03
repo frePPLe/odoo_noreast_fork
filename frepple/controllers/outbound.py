@@ -1110,6 +1110,7 @@ class exporter(object):
                 "purchase_class",
                 "waste_mo_increment",
                 "batchwindow_max_unit",
+                "tray_size",
             ]
             + (
                 [
@@ -1307,6 +1308,10 @@ class exporter(object):
             if tmpl["batchwindow_max_unit"] is not None:
                 yield '<stringproperty name="batchwindow_max_unit" value="%s"/>' % (
                     tmpl["batchwindow_max_unit"],
+                )
+            if tmpl["tray_size"]:
+                yield '<stringproperty name="tray_size" value="%s"/>' % (
+                    tmpl["tray_size"],
                 )
 
             # Export suppliers for the item, if the item is allowed to be purchased

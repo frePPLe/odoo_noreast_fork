@@ -286,24 +286,6 @@ class importer(object):
                         # Is that an update of an existing PO ?
                         status = elem.get("status")
                         if status in ("approved", "confirmed"):
-                            po_line_id = int(elem.get("id").rsplit(" - ", 1)[-1])
-                            po_line = proc_orderline.browse(po_line_id)
-                            if po_line:
-                                po_line.write(
-                                    {
-                                        "product_id": int(item_id),
-                                        "product_qty": quantity,
-                                        "product_uom": int(uom_id),
-                                        "date_planned": date_planned,
-                                        "name": elem.get("item"),
-                                    }
-                                )
-                                countproc += 1
-                            else:
-                                logger.error(
-                                    "Unable to find PO line %s in Odoo"
-                                    % (elem.get("reference"),)
-                                )
                             continue
 
                         # Create purchase order

@@ -2159,6 +2159,7 @@ class exporter(object):
                 "order_id",
                 "move_ids",
                 "dpass",
+                "on_hold_days",
             ],
             order="delivery_date asc",
         )
@@ -2245,9 +2246,13 @@ class exporter(object):
             if not customer or not location or not product:
                 # Not interested in this sales order...
                 continue
+            on_hold_days = i["on_hold_days"] or 0
             due = self.formatDateTime(
-                i["delivery_date"] or j.get("commitment_date") or j["date_order"]
+                (i["delivery_date"] + timedelta(days=on_hold_days))
+                or j.get("commitment_date")
+                or j["date_order"]
             )
+
             priority = 10  # We give all customer orders the same default priority
             # but we correct it if dpass exists
             # DPAS --> PRIORITY
@@ -2302,13 +2307,15 @@ class exporter(object):
                                 else 0
                             )
                             due = self.formatDateTime(
-                                i["delivery_date"] or sm["date"] or j["date_order"]
+                                (i["delivery_date"] + timedelta(days=on_hold_days))
+                                or sm["date"]
+                                or j["date_order"]
                             )
 
                             yield (
                                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                                 # Disable the next line in frepple < 6.25
-                                '<owner name=%s policy="%s" xsi:type="demand_group"/>'
+                                '<owner name=%s policy="%s" xsi:type="demand_group"/>%s'
                                 "</demand>\n"
                             ) % (
                                 quoteattr(sol_name),
@@ -2337,6 +2344,14 @@ class exporter(object):
                                     "alltogether"
                                     if j["picking_policy"] == "one"
                                     else "independent"
+                                ),
+                                (
+                                    (
+                                        '<stringproperty name="on_hold_days" value="%s"/>'
+                                        % (on_hold_days,)
+                                    )
+                                    if on_hold_days
+                                    else ""
                                 ),
                             )
                     # We are done with this line, move to the next one
@@ -2378,7 +2393,7 @@ class exporter(object):
             yield (
                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                 # Disable the next line in frepple < 6.25
-                '<owner name=%s policy="%s" xsi:type="demand_group"/>'
+                '<owner name=%s policy="%s" xsi:type="demand_group"/>%s'
                 "</demand>\n"
             ) % (
                 quoteattr(name),
@@ -2394,6 +2409,14 @@ class exporter(object):
                 # Disable the next lines in frepple < 6.25
                 quoteattr(i["order_id"][1]),
                 "alltogether" if j["picking_policy"] == "one" else "independent",
+                (
+                    (
+                        '<stringproperty name="on_hold_days" value="%s"/>'
+                        % (on_hold_days,)
+                    )
+                    if on_hold_days
+                    else ""
+                ),
             )
         yield "</demands>\n"
 

@@ -652,6 +652,7 @@ class importer(object):
                         )
                         if (elem.get("status") or "proposed") == "proposed":
                             # MO creation
+                            priority = int(elem.get("priority"))
                             mo = mfg_order.with_context(context).create(
                                 {
                                     "product_qty": elem.get("quantity"),
@@ -682,6 +683,15 @@ class importer(object):
                                     ),
                                     "so_lines_records_ids": so_lines_records_ids,
                                     "summary_notes": summary_notes,
+                                    "dpass": (
+                                        "other"
+                                        if priority == 1
+                                        else (
+                                            "DX"
+                                            if priority == 2
+                                            else ("DO" if priority == 3 else "Empty")
+                                        )
+                                    ),
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

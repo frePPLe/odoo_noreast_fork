@@ -2315,7 +2315,7 @@ class exporter(object):
                             yield (
                                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                                 # Disable the next line in frepple < 6.25
-                                '<owner name=%s policy="%s" xsi:type="demand_group"/>%s'
+                                '<owner name=%s policy="%s" xsi:type="demand_group"/>%s%s'
                                 "</demand>\n"
                             ) % (
                                 quoteattr(sol_name),
@@ -2351,6 +2351,14 @@ class exporter(object):
                                         % (on_hold_days,)
                                     )
                                     if on_hold_days
+                                    else ""
+                                ),
+                                (
+                                    (
+                                        '<stringproperty name="dpass" value="%s"/>'
+                                        % (dpass,)
+                                    )
+                                    if dpass
                                     else ""
                                 ),
                             )
@@ -2393,7 +2401,7 @@ class exporter(object):
             yield (
                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                 # Disable the next line in frepple < 6.25
-                '<owner name=%s policy="%s" xsi:type="demand_group"/>%s'
+                '<owner name=%s policy="%s" xsi:type="demand_group"/>%s%s'
                 "</demand>\n"
             ) % (
                 quoteattr(name),
@@ -2415,6 +2423,11 @@ class exporter(object):
                         % (on_hold_days,)
                     )
                     if on_hold_days
+                    else ""
+                ),
+                (
+                    ('<stringproperty name="dpass" value="%s"/>' % (dpass,))
+                    if dpass
                     else ""
                 ),
             )

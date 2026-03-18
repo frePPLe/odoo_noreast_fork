@@ -651,7 +651,7 @@ class importer(object):
                             }
                         )
                         priority = int(elem.get("dpass") or 99)
-                        dpass = "Empty"
+                        dpass = None
                         if priority == 1:
                             dpass = "other"
                         elif priority == 2:

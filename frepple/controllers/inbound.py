@@ -650,6 +650,17 @@ class importer(object):
                                 "ignore_secondary_workcenters": True,
                             }
                         )
+                        dpass = int(elem.get("dpass") or 99)
+                        if dpass:
+                            if dpass == 1:
+                                dpass = "other"
+                            elif dpass == 2:
+                                dpass = "DX"
+                            elif dpass == 3:
+                                dpass = "DO"
+                            else:
+                                dpass = "Empty"
+
                         if (elem.get("status") or "proposed") == "proposed":
                             # MO creation
                             mo = mfg_order.with_context(context).create(
@@ -682,6 +693,7 @@ class importer(object):
                                     ),
                                     "so_lines_records_ids": so_lines_records_ids,
                                     "summary_notes": summary_notes,
+                                    "dpass": dpass,
                                 }
                             )
                             # Remember odoo name for the MO reference passed by frepple.

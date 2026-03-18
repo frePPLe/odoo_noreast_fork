@@ -650,16 +650,14 @@ class importer(object):
                                 "ignore_secondary_workcenters": True,
                             }
                         )
-                        dpass = int(elem.get("dpass") or 99)
-                        if dpass:
-                            if dpass == 1:
-                                dpass = "other"
-                            elif dpass == 2:
-                                dpass = "DX"
-                            elif dpass == 3:
-                                dpass = "DO"
-                            else:
-                                dpass = "Empty"
+                        priority = int(elem.get("dpass") or 99)
+                        dpass = "Empty"
+                        if priority == 1:
+                            dpass = "other"
+                        elif priority == 2:
+                            dpass = "DX"
+                        elif priority == 3:
+                            dpass = "DO"
 
                         if (elem.get("status") or "proposed") == "proposed":
                             # MO creation

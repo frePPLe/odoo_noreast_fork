@@ -2143,7 +2143,6 @@ class exporter(object):
                     datetime.now() - timedelta(days=self.delta),
                 ),
                 ("order_id.state", "not in", ["draft", "sent", "cancel"]),
-                ("on_hold", "!=", True),
             ]
         )
         so_line = self.generator.getData(
@@ -2159,7 +2158,6 @@ class exporter(object):
                 "order_id",
                 "move_ids",
                 "dpass",
-                "on_hold_days",
             ],
             order="delivery_date asc",
         )

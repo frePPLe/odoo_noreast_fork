@@ -2126,13 +2126,11 @@ class exporter(object):
         search = (
             [
                 "&",
-                "&",
                 ("product_id", "!=", False),
                 ("order_id.state", "not in", ["draft", "sent", "cancel"]),
             ]
             if self.delta >= 999
             else [
-                "&",
                 "&",
                 "&",
                 ("product_id", "!=", False),

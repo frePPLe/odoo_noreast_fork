@@ -2129,7 +2129,6 @@ class exporter(object):
                 "&",
                 ("product_id", "!=", False),
                 ("order_id.state", "not in", ["draft", "sent", "cancel"]),
-                ("on_hold", "!=", True),
             ]
             if self.delta >= 999
             else [
@@ -2158,6 +2157,7 @@ class exporter(object):
                 "order_id",
                 "move_ids",
                 "dpass",
+                "on_hold_days",
             ],
             order="delivery_date asc",
         )

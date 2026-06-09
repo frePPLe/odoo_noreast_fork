@@ -32,7 +32,6 @@ from datetime import date, datetime, timedelta, time, timezone
 import ssl
 from zoneinfo import ZoneInfo
 
-
 try:
     import odoo
 except ImportError:
@@ -1111,6 +1110,7 @@ class exporter(object):
                 "waste_mo_increment",
                 "batchwindow_max_unit",
                 "tray_size",
+                "comp_sub_inBOM",
             ]
             + (
                 [
@@ -1312,6 +1312,11 @@ class exporter(object):
             if tmpl["tray_size"]:
                 yield '<stringproperty name="tray_size" value="%s"/>' % (
                     tmpl["tray_size"],
+                )
+
+            if tmpl["comp_sub_inBOM"]:
+                yield '<booleanproperty name="comp_sub_inbom" value="%s"/>' % (
+                    1 if tmpl["comp_sub_inBOM"] else 0,
                 )
 
             # Export suppliers for the item, if the item is allowed to be purchased
@@ -2308,6 +2313,27 @@ class exporter(object):
                                 or j["date_order"]
                             )
 
+                            quantity = (
+                                qty - reserved_quantity
+                                if qty - reserved_quantity > 0
+                                else qty
+                            )
+                            # Apply the waste to the quantity
+                            tmpl = self.product_product[i["product_id"][0]]["template"]
+                            waste = tmpl.get("waste_mo_increment")
+                            if waste:
+                                if quantity <= 5 and quantity >= 1:
+                                    quantity += 1
+                                elif quantity > 5:
+                                    extra_qty = round(quantity * waste / 100.0)
+                                    quantity += min(2, extra_qty)
+
+                            due = self.formatDateTime(
+                                (i["delivery_date"] + timedelta(days=on_hold_days))
+                                or sm["date"]
+                                or j["date_order"]
+                            )
+
                             yield (
                                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                                 # Disable the next line in frepple < 6.25
@@ -2316,11 +2342,7 @@ class exporter(object):
                             ) % (
                                 quoteattr(sol_name),
                                 quoteattr(batch),
-                                (
-                                    qty - reserved_quantity
-                                    if qty - reserved_quantity > 0
-                                    else qty
-                                ),
+                                quantity,
                                 due,
                                 priority,
                                 j["picking_policy"] == "one"
@@ -2386,6 +2408,15 @@ class exporter(object):
                 logger.warning("Unknown sales order state: %s." % (state,))
                 continue
 
+            # Apply the waste to the quantity
+            tmpl = self.product_product[i["product_id"][0]]["template"]
+            waste = tmpl.get("waste_mo_increment")
+            if waste:
+                if qty <= 5 and qty >= 1:
+                    qty += 1
+                elif qty > 5:
+                    extra_qty = round(qty * waste / 100.0)
+                    qty += min(2, extra_qty)
             yield (
                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                 # Disable the next line in frepple < 6.25
@@ -3356,8 +3387,7 @@ class exporter(object):
         yield "<operationplans>\n"
         if isinstance(self.generator, Odoo_generator):
             # SQL query gives much better performance
-            self.generator.env.cr.execute(
-                """
+            self.generator.env.cr.execute("""
                 SELECT stock_quant.product_id,
                 stock_quant.location_id,
                 sum(stock_quant.quantity) as quantity,
@@ -3375,8 +3405,7 @@ class exporter(object):
                 stock_lot.name,
                 stock_lot.expiration_date
                 ORDER BY location_id ASC
-                """
-            )
+                """)
             data = self.generator.env.cr.fetchall()
         else:
             data = [

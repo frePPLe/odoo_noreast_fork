@@ -2320,19 +2320,16 @@ class exporter(object):
                             )
                             # Apply the waste to the quantity
                             tmpl = self.product_product[i["product_id"][0]]["template"]
-                            waste = tmpl.get("waste_mo_increment")
-                            if waste:
-                                if quantity <= 5 and quantity >= 1:
-                                    quantity += 1
-                                elif quantity > 5:
-                                    extra_qty = round(quantity * waste / 100.0)
-                                    quantity += min(2, extra_qty)
-
-                            due = self.formatDateTime(
-                                (i["delivery_date"] + timedelta(days=on_hold_days))
-                                or sm["date"]
-                                or j["date_order"]
-                            )
+                            if tmpl in self.product_templates:
+                                waste = self.product_templates[tmpl].get(
+                                    "waste_mo_increment"
+                                )
+                                if waste:
+                                    if quantity <= 5 and quantity >= 1:
+                                        quantity += 1
+                                    elif quantity > 5:
+                                        extra_qty = round(quantity * waste / 100.0)
+                                        quantity += min(2, extra_qty)
 
                             yield (
                                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
@@ -2410,13 +2407,14 @@ class exporter(object):
 
             # Apply the waste to the quantity
             tmpl = self.product_product[i["product_id"][0]]["template"]
-            waste = tmpl.get("waste_mo_increment")
-            if waste:
-                if qty <= 5 and qty >= 1:
-                    qty += 1
-                elif qty > 5:
-                    extra_qty = round(qty * waste / 100.0)
-                    qty += min(2, extra_qty)
+            if tmpl in self.product_templates:
+                waste = self.product_templates[tmpl].get("waste_mo_increment")
+                if waste:
+                    if qty <= 5 and qty >= 1:
+                        qty += 1
+                    elif qty > 5:
+                        extra_qty = round(qty * waste / 100.0)
+                        qty += min(2, extra_qty)
             yield (
                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                 # Disable the next line in frepple < 6.25

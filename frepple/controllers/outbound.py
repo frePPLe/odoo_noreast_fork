@@ -2324,7 +2324,7 @@ class exporter(object):
                                 waste = self.product_templates[tmpl].get(
                                     "waste_mo_increment"
                                 )
-                                if waste:
+                                if waste and i["delivery_date"] >= "2026-07-27":
                                     if quantity <= 5 and quantity >= 1:
                                         quantity += 1
                                     elif quantity > 5:
@@ -2409,7 +2409,7 @@ class exporter(object):
             tmpl = self.product_product[i["product_id"][0]]["template"]
             if tmpl in self.product_templates:
                 waste = self.product_templates[tmpl].get("waste_mo_increment")
-                if waste:
+                if waste and i["delivery_date"] >= "2026-07-27":
                     if qty <= 5 and qty >= 1:
                         qty += 1
                     elif qty > 5:
@@ -2766,7 +2766,8 @@ class exporter(object):
             except Exception:
                 continue
             qty = self.convert_qty_uom(
-                i.qty_producing if i.qty_producing else i.product_qty,
+                # i.qty_producing if i.qty_producing else i.product_qty,
+                i.product_qty,
                 i.product_uom_id.id,
                 self.product_product[i.product_id.id]["template"],
             )

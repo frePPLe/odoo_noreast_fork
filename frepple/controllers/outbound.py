@@ -2324,7 +2324,7 @@ class exporter(object):
                                 waste = self.product_templates[tmpl].get(
                                     "waste_mo_increment"
                                 )
-                                if waste and i["delivery_date"] >= datetime(2026, 7, 27):
+                                if waste and i["delivery_date"] >= date(2026, 7, 27):
                                     if quantity <= 5 and quantity >= 1:
                                         quantity += 1
                                     elif quantity > 5:
@@ -2409,7 +2409,7 @@ class exporter(object):
             tmpl = self.product_product[i["product_id"][0]]["template"]
             if tmpl in self.product_templates:
                 waste = self.product_templates[tmpl].get("waste_mo_increment")
-                if waste and i["delivery_date"] >= datetime(2026, 7, 27):
+                if waste and i["delivery_date"] >= date(2026, 7, 27):
                     if qty <= 5 and qty >= 1:
                         qty += 1
                     elif qty > 5:

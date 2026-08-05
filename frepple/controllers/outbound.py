@@ -2261,8 +2261,8 @@ class exporter(object):
             on_hold_days = i["on_hold_days"] or 0
             due = self.formatDateTime(
                 (i["delivery_date"] + timedelta(days=on_hold_days))
-                or j.get("commitment_date")
-                or j["date_order"]
+                if i["delivery_date"]
+                else (j.get("commitment_date") or j["date_order"])
             )
 
             priority = 10  # We give all customer orders the same default priority

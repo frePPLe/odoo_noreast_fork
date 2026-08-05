@@ -2020,7 +2020,7 @@ class exporter(object):
                                 step["employee_ratio"],
                                 quoteattr(step["flowtype"]),
                                 1,
-                                quoteattr(step["search_mode"]),
+                                quoteattr(step.get("search_mode", "PRIORITY")),
                                 quoteattr(
                                     self.map_workcenters[step["workcenter_id"][0]]
                                 ),

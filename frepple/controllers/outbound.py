@@ -2020,7 +2020,18 @@ class exporter(object):
                                 step["employee_ratio"],
                                 quoteattr(step["flowtype"]),
                                 1,
-                                quoteattr(step.get("search_mode", "PRIORITY")),
+                                (
+                                    quoteattr("PRIORITY")
+                                    if not step.get("search_mode")
+                                    or not step.get("search_mode")
+                                    in [
+                                        "PRIORITY",
+                                        "MINCOST",
+                                        "MINPENALTY",
+                                        "MINCOSTPENALTY",
+                                    ]
+                                    else quoteattr(step.get("search_mode"))
+                                ),
                                 quoteattr(
                                     self.map_workcenters[step["workcenter_id"][0]]
                                 ),

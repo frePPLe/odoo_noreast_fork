@@ -2518,6 +2518,8 @@ class exporter(object):
             for i in self.generator.getData(
                 "purchase.order.line",
                 search=[
+                    "&",
+                    "|",
                     "|",
                     (
                         "order_id.state",
@@ -2528,6 +2530,7 @@ class exporter(object):
                         # Alternative II: send RFQs to frepple to avoid that the same purchasing proposal is generated again by frepple.
                         # ("bid", "confirmed", "cancel"),
                     ),
+                    ("order_id.pending_confirmation", "=", True),
                     ("order_id.state", "=", False),
                     "|",
                     ("order_id.receipt_status", "!=", "full"),
@@ -2689,7 +2692,18 @@ class exporter(object):
                         batch = None
 
                     yield '<operationplan reference=%s %sordertype="PO" start="%s" end="%s" quantity="%f" status="confirmed">' "<item name=%s/><location name=%s/><supplier name=%s/></operationplan>\n" % (
-                        quoteattr("%s - %s" % (j.name, i.id)),
+                        quoteattr(
+                            "%s - %s%s"
+                            % (
+                                j.name,
+                                i.id,
+                                (
+                                    " (RFQ)"
+                                    if j.pending_confirmation and j.state != "purchase"
+                                    else ""
+                                ),
+                            )
+                        ),
                         "batch=%s " % quoteattr(batch) if batch else "",
                         start,
                         end,

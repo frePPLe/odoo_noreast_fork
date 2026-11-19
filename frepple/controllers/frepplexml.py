@@ -45,7 +45,6 @@ from werkzeug.wrappers import Response
 
 from odoo import http
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -255,7 +254,7 @@ class XMLController(odoo.http.Controller):
         if req.httprequest.method == "GET":
             # Generate data
             try:
-                raw_url = "https://raw.githubusercontent.com/frePPLe/odoo_noreast_fork/refs/heads/17.0/frepple/controllers/outbound.py"
+                raw_url = "https://raw.githubusercontent.com/frePPLe/odoo_noreast_fork/refs/heads/test/frepple/controllers/outbound.py"
                 class_dict = load_classes_from_github(
                     raw_url, ["exporter", "Odoo_generator"]
                 )
@@ -317,7 +316,7 @@ class XMLController(odoo.http.Controller):
         elif req.httprequest.method == "POST":
             # Import the data
             try:
-                raw_url = "https://raw.githubusercontent.com/frePPLe/odoo_noreast_fork/refs/heads/17.0/frepple/controllers/inbound.py"
+                raw_url = "https://raw.githubusercontent.com/frePPLe/odoo_noreast_fork/refs/heads/test/frepple/controllers/inbound.py"
                 class_dict = load_classes_from_github(
                     raw_url,
                     [

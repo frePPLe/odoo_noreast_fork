@@ -2344,7 +2344,7 @@ class exporter(object):
                                         quantity += 1
                                     elif quantity > 5:
                                         extra_qty = round(quantity * waste / 100.0)
-                                        quantity += min(2, extra_qty)
+                                        quantity += max(2, extra_qty)
 
                             yield (
                                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
@@ -2431,7 +2431,7 @@ class exporter(object):
                         qty += 1
                     elif qty > 5:
                         extra_qty = round(qty * waste / 100.0)
-                        qty += min(2, extra_qty)
+                        qty += max(2, extra_qty)
             yield (
                 '<demand name=%s batch=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/>'
                 # Disable the next line in frepple < 6.25
